@@ -1,6 +1,6 @@
 ---
 name: Radarr
-version: "5.11.0.9244"
+version: "5.11.0.9245"
 slug: radarr
 description: Movie collection manager for Usenet and BitTorrent users.
 url: https://github.com/halali/ha-apps/tree/main/radarr

@@ -37,7 +37,7 @@ set_xml() {
 
 set_xml UrlBase ""
 set_xml BindAddress "*"
-set_xml Port "9696"
+set_xml Port "9697"
 set_xml EnableSsl "False"
 
 if [[ "${RESET_AUTH}" == "true" ]]; then

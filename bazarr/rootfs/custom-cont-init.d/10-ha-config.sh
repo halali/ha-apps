@@ -27,7 +27,7 @@ if not cp.has_section("general"):
     cp.add_section("general")
 cp.set("general", "base_url", "")
 cp.set("general", "ip", "0.0.0.0")
-cp.set("general", "port", "6767")
+cp.set("general", "port", "6768")
 with open(path, "w") as f:
     cp.write(f)
 PY
