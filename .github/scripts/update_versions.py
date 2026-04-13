@@ -51,9 +51,17 @@ def get_lsio_image(build_yaml: Path) -> Optional[str]:
     return None
 
 
-def fetch_latest_version(image: str) -> Optional[str]:
+def fetch_latest_version(image: str) -> Optional[tuple[str, str]]:
+    """Return (version_for_config, docker_tag_for_build) for the latest release.
+
+    Some LSIO images only publish full tags like '2.3.5.5327-ls141' without a
+    short '2.3.5.5327' alias.  We use the clean version in config.yaml but must
+    use the actual published tag in build.yaml.  Prefer the short tag when it
+    exists; fall back to the full '-ls' tag otherwise.
+    """
     url = DOCKERHUB_URL.format(image=image)
-    versions: list[tuple[Version, str]] = []
+    # ver_str -> list of all matching raw tag names for that version
+    version_tags: dict[str, list[str]] = {}
     while url:
         resp = requests.get(url, timeout=30)
         resp.raise_for_status()
@@ -67,17 +75,21 @@ def fetch_latest_version(image: str) -> Optional[str]:
                 continue
             ver_str = m.group("ver")
             try:
-                versions.append((Version(ver_str), ver_str))
+                Version(ver_str)
             except InvalidVersion:
                 continue
+            version_tags.setdefault(ver_str, []).append(name)
         url = payload.get("next")
-        # Safety: cap pagination
-        if len(versions) > 500:
+        if sum(len(v) for v in version_tags.values()) > 500:
             break
-    if not versions:
+    if not version_tags:
         return None
-    versions.sort(key=lambda x: x[0], reverse=True)
-    return versions[0][1]
+    latest_ver = max(version_tags.keys(), key=lambda v: Version(v))
+    tags = version_tags[latest_ver]
+    # Prefer the short tag (no -ls suffix) when it exists
+    short = [t for t in tags if not re.search(r"-ls\d+$", t)]
+    docker_tag = short[0] if short else tags[0]
+    return latest_ver, docker_tag
 
 
 def update_build_yaml(path: Path, image: str, new_version: str) -> bool:
@@ -168,13 +180,14 @@ def main() -> int:
             print(f"[skip] {addon}: no LinuxServer.io image detected")
             continue
 
-        latest = fetch_latest_version(image)
-        if not latest:
+        result = fetch_latest_version(image)
+        if not result:
             print(f"[warn] {addon}: no versions found for {image}")
             continue
+        latest, docker_tag = result
 
         cfg_changed, old_ver = update_config_yaml(config_yaml, latest)
-        bld_changed = update_build_yaml(build_yaml, image, latest)
+        bld_changed = update_build_yaml(build_yaml, image, docker_tag)
 
         if cfg_changed or bld_changed:
             prepend_changelog(changelog, latest, image)
