@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        addon: [sonarr, radarr, bazarr, overseerr]
+        addon: [sonarr, radarr, bazarr, seerr, prowlarr]
     steps:
       - uses: actions/checkout@v4
       - uses: hadolint/hadolint-action@v3.1.0
