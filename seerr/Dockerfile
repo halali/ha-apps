@@ -2,7 +2,8 @@ ARG BUILD_FROM
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
-# Switch to root for setup — dropped back to node via su-exec in entrypoint
+# Root is needed for apk and file setup; init script drops to node via su-exec
+# hadolint ignore=DL3002
 USER root
 
 # nginx: reverse proxy with sub_filter for Next.js path rewriting
