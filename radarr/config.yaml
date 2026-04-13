@@ -7,9 +7,6 @@ url: https://github.com/halali/ha-apps/tree/main/radarr
 codenotary: notary@home-assistant.io
 arch:
   - amd64
-  - aarch64
-  - armv7
-  - armhf
 init: false
 startup: application
 boot: auto

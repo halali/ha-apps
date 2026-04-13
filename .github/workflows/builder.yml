@@ -20,6 +20,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
   packages: write
 
 jobs:
@@ -82,7 +83,7 @@ jobs:
           fi
 
   build:
-    name: Build ${{ matrix.addon }} (${{ matrix.arch }})
+    name: Build ${{ matrix.addon }} (amd64)
     needs: init
     if: needs.init.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
@@ -90,11 +91,6 @@ jobs:
       fail-fast: false
       matrix:
         addon: ${{ fromJson(needs.init.outputs.changed_addons) }}
-        arch:
-          - amd64
-          - aarch64
-          - armv7
-          - armhf
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -102,28 +98,37 @@ jobs:
       - name: Get add-on metadata
         id: meta
         run: |
-          VERSION=$(grep -E '^version:' ${{ matrix.addon }}/config.yaml | head -1 | sed -E 's/version:\s*"?([^"]+)"?/\1/')
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          ADDON="${{ matrix.addon }}"
+          VERSION=$(grep -E '^version:' "${ADDON}/config.yaml" | head -1 | sed -E 's/version:[[:space:]]*"?([^"]+)"?/\1/')
+          BUILD_FROM=$(python3 -c "
+          import sys
+          data = open('${ADDON}/build.yaml').read()
+          for line in data.splitlines():
+              line = line.strip()
+              if line.startswith('amd64:'):
+                  print(line.split(':', 1)[1].strip())
+                  break
+          ")
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "build_from=${BUILD_FROM}" >> "$GITHUB_OUTPUT"
+          echo "date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
 
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
+      - name: Build image
+        uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build add-on image
-        uses: home-assistant/builder@master
-        with:
-          args: |
-            --${{ matrix.arch }} \
-            --target ${{ matrix.addon }} \
-            --image "halali/ha-apps-{arch}-${{ matrix.addon }}" \
-            --docker-hub ghcr.io \
-            --addon
+          arch: amd64
+          image: ghcr.io/${{ github.repository_owner }}/ha-apps-amd64-${{ matrix.addon }}
+          image-tags: |
+            ${{ steps.meta.outputs.version }}
+            latest
+          version: ${{ steps.meta.outputs.version }}
+          context: ${{ matrix.addon }}
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+          push: "true"
+          cosign: "false"
+          build-args: |
+            BUILD_FROM=${{ steps.meta.outputs.build_from }}
+            BUILD_ARCH=amd64
+            BUILD_DATE=${{ steps.meta.outputs.date }}
+            BUILD_REF=${{ github.sha }}
+            BUILD_VERSION=${{ steps.meta.outputs.version }}
