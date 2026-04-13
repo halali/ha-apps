@@ -1,0 +1,5 @@
+.github/.update_summary
+*.pyc
+__pycache__/
+.DS_Store
+*.swp

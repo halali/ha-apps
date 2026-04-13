@@ -1,0 +1,17 @@
+---
+build_from:
+  amd64: lscr.io/linuxserver/bazarr:1.4.5
+  aarch64: lscr.io/linuxserver/bazarr:1.4.5
+  armv7: lscr.io/linuxserver/bazarr:1.4.5
+  armhf: lscr.io/linuxserver/bazarr:1.4.5
+labels:
+  org.opencontainers.image.title: "Bazarr"
+  org.opencontainers.image.description: "Bazarr add-on pre Home Assistant"
+  org.opencontainers.image.source: "https://github.com/halali/ha-apps"
+  org.opencontainers.image.licenses: "MIT"
+args:
+  BUILD_ARCH:
+    - amd64
+    - aarch64
+    - armv7
+    - armhf

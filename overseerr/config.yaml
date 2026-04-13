@@ -1,0 +1,43 @@
+---
+name: Overseerr
+version: "1.33.2"
+slug: overseerr
+description: Request management and media discovery tool for Plex / Jellyfin ecosystem.
+url: https://github.com/halali/ha-apps/tree/main/overseerr
+codenotary: notary@home-assistant.io
+arch:
+  - amd64
+  - aarch64
+  - armv7
+  - armhf
+init: false
+startup: application
+boot: auto
+host_network: false
+hassio_api: true
+hassio_role: default
+ingress: true
+ingress_port: 5055
+ingress_stream: true
+panel_icon: mdi:eye-plus
+panel_title: Overseerr
+panel_admin: true
+ports:
+  "5055/tcp": 5055
+ports_description:
+  "5055/tcp": Web UI / API (pre webhook integrácie a externé klientov)
+map:
+  - addon_config:rw
+  - media:ro
+  - share:rw
+options:
+  PUID: 0
+  PGID: 0
+  TZ: Europe/Bratislava
+  LOG_LEVEL: info
+schema:
+  PUID: int
+  PGID: int
+  TZ: str
+  LOG_LEVEL: list(silly|debug|info|warn|error)
+image: ghcr.io/halali/ha-apps-{arch}-overseerr

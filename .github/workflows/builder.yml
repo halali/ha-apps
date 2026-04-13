@@ -1,0 +1,118 @@
+---
+name: Builder
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "*/config.yaml"
+      - "*/build.yaml"
+      - "*/Dockerfile"
+      - "*/rootfs/**"
+      - ".github/workflows/builder.yml"
+  workflow_dispatch:
+    inputs:
+      addon:
+        description: "Add-on to build (leave empty for all changed)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  init:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      changed_addons: ${{ steps.set-matrix.outputs.changed }}
+      any_changed: ${{ steps.set-matrix.outputs.any_changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Compute changed add-ons
+        id: set-matrix
+        run: |
+          set -euo pipefail
+          ADDONS='["sonarr","radarr","bazarr","overseerr"]'
+          MANUAL_ADDON='${{ github.event.inputs.addon }}'
+
+          if [[ -n "$MANUAL_ADDON" ]]; then
+            echo "changed=[\"$MANUAL_ADDON\"]" >> "$GITHUB_OUTPUT"
+            echo "any_changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "changed=$ADDONS" >> "$GITHUB_OUTPUT"
+            echo "any_changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          CHANGED=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" \
+            | awk -F/ '{print $1}' | sort -u)
+          FILTERED=$(python3 -c "
+          import json, sys
+          addons = json.loads('$ADDONS')
+          changed = set(sys.stdin.read().split())
+          out = [a for a in addons if a in changed]
+          print(json.dumps(out))
+          " <<< "$CHANGED")
+          echo "changed=$FILTERED" >> "$GITHUB_OUTPUT"
+          if [[ "$FILTERED" == "[]" ]]; then
+            echo "any_changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "any_changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    name: Build ${{ matrix.addon }} (${{ matrix.arch }})
+    needs: init
+    if: needs.init.outputs.any_changed == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        addon: ${{ fromJson(needs.init.outputs.changed_addons) }}
+        arch:
+          - amd64
+          - aarch64
+          - armv7
+          - armhf
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get add-on metadata
+        id: meta
+        run: |
+          VERSION=$(grep -E '^version:' ${{ matrix.addon }}/config.yaml | head -1 | sed -E 's/version:\s*"?([^"]+)"?/\1/')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build add-on image
+        uses: home-assistant/builder@master
+        with:
+          args: |
+            --${{ matrix.arch }} \
+            --target ${{ matrix.addon }} \
+            --image "halali/ha-apps-{arch}-${{ matrix.addon }}" \
+            --docker-hub ghcr.io \
+            --addon

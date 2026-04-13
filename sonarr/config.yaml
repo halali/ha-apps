@@ -1,0 +1,44 @@
+---
+name: Sonarr
+version: "4.0.10.2544"
+slug: sonarr
+description: Smart PVR for newsgroup and bittorrent users — TV series.
+url: https://github.com/halali/ha-apps/tree/main/sonarr
+codenotary: notary@home-assistant.io
+arch:
+  - amd64
+  - aarch64
+  - armv7
+  - armhf
+init: false
+startup: application
+boot: auto
+host_network: false
+hassio_api: true
+hassio_role: default
+homeassistant_api: false
+ingress: true
+ingress_port: 8989
+ingress_stream: true
+panel_icon: mdi:television-classic
+panel_title: Sonarr
+panel_admin: true
+ports:
+  "8989/tcp": 8989
+ports_description:
+  "8989/tcp": Web UI / API (pre mobilné apps, Overseerr integráciu)
+map:
+  - addon_config:rw
+  - media:rw
+  - share:rw
+options:
+  PUID: 0
+  PGID: 0
+  TZ: Europe/Bratislava
+  reset_auth: false
+schema:
+  PUID: int
+  PGID: int
+  TZ: str
+  reset_auth: bool
+image: ghcr.io/halali/ha-apps-{arch}-sonarr

@@ -1,0 +1,41 @@
+---
+name: Bazarr
+version: "1.4.5"
+slug: bazarr
+description: Companion application to Sonarr and Radarr — manages and downloads subtitles.
+url: https://github.com/halali/ha-apps/tree/main/bazarr
+codenotary: notary@home-assistant.io
+arch:
+  - amd64
+  - aarch64
+  - armv7
+  - armhf
+init: false
+startup: application
+boot: auto
+host_network: false
+hassio_api: true
+hassio_role: default
+ingress: true
+ingress_port: 6767
+ingress_stream: true
+panel_icon: mdi:subtitles
+panel_title: Bazarr
+panel_admin: true
+ports:
+  "6767/tcp": 6767
+ports_description:
+  "6767/tcp": Web UI / API
+map:
+  - addon_config:rw
+  - media:rw
+  - share:rw
+options:
+  PUID: 0
+  PGID: 0
+  TZ: Europe/Bratislava
+schema:
+  PUID: int
+  PGID: int
+  TZ: str
+image: ghcr.io/halali/ha-apps-{arch}-bazarr

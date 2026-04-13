@@ -1,0 +1,17 @@
+---
+build_from:
+  amd64: lscr.io/linuxserver/overseerr:1.33.2
+  aarch64: lscr.io/linuxserver/overseerr:1.33.2
+  armv7: lscr.io/linuxserver/overseerr:1.33.2
+  armhf: lscr.io/linuxserver/overseerr:1.33.2
+labels:
+  org.opencontainers.image.title: "Overseerr"
+  org.opencontainers.image.description: "Overseerr add-on pre Home Assistant"
+  org.opencontainers.image.source: "https://github.com/halali/ha-apps"
+  org.opencontainers.image.licenses: "MIT"
+args:
+  BUILD_ARCH:
+    - amd64
+    - aarch64
+    - armv7
+    - armhf

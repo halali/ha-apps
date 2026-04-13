@@ -1,0 +1,42 @@
+---
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  hadolint:
+    name: Hadolint (Dockerfiles)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        addon: [sonarr, radarr, bazarr, overseerr]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ${{ matrix.addon }}/Dockerfile
+          ignore: DL3006,DL3008
+
+  yamllint:
+    name: yamllint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: frenck/action-yamllint@v1
+
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: "./"
+          format: gcc

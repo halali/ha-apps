@@ -1,0 +1,43 @@
+---
+name: Radarr
+version: "5.11.0.9244"
+slug: radarr
+description: Movie collection manager for Usenet and BitTorrent users.
+url: https://github.com/halali/ha-apps/tree/main/radarr
+codenotary: notary@home-assistant.io
+arch:
+  - amd64
+  - aarch64
+  - armv7
+  - armhf
+init: false
+startup: application
+boot: auto
+host_network: false
+hassio_api: true
+hassio_role: default
+ingress: true
+ingress_port: 7878
+ingress_stream: true
+panel_icon: mdi:movie-open
+panel_title: Radarr
+panel_admin: true
+ports:
+  "7878/tcp": 7878
+ports_description:
+  "7878/tcp": Web UI / API (pre mobilné apps, Overseerr, Bazarr integráciu)
+map:
+  - addon_config:rw
+  - media:rw
+  - share:rw
+options:
+  PUID: 0
+  PGID: 0
+  TZ: Europe/Bratislava
+  reset_auth: false
+schema:
+  PUID: int
+  PGID: int
+  TZ: str
+  reset_auth: bool
+image: ghcr.io/halali/ha-apps-{arch}-radarr

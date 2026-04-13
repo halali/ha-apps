@@ -1,0 +1,17 @@
+---
+build_from:
+  amd64: lscr.io/linuxserver/sonarr:4.0.10
+  aarch64: lscr.io/linuxserver/sonarr:4.0.10
+  armv7: lscr.io/linuxserver/sonarr:4.0.10
+  armhf: lscr.io/linuxserver/sonarr:4.0.10
+labels:
+  org.opencontainers.image.title: "Sonarr"
+  org.opencontainers.image.description: "Sonarr add-on pre Home Assistant"
+  org.opencontainers.image.source: "https://github.com/halali/ha-apps"
+  org.opencontainers.image.licenses: "MIT"
+args:
+  BUILD_ARCH:
+    - amd64
+    - aarch64
+    - armv7
+    - armhf
