@@ -1,18 +1,32 @@
-# Seerr
+# Home Assistant Add-on: Seerr
 
-Open-source media request and discovery manager for Plex, Jellyfin, and Emby.
-Fork of Overseerr with added Emby/Jellyfin support and active maintenance.
+Open-source media request and discovery manager for Plex, Jellyfin, and Emby. Active fork of Overseerr with added Emby/Jellyfin support.
 
-## Migrácia z Overseerr
+## Installation
 
-Seerr automaticky migruje dáta pri prvom spustení. Postup:
+1. Add the repository `https://github.com/halali/ha-apps` in the HA Add-on Store.
+2. Install **Seerr**, start it and open via the sidebar.
 
-1. **Zastav** Overseerr addon v HA.
-2. Skopíruj obsah config adresára Overseerr addonu do config adresára Seerr addonu:
-   - Cez HA **File Manager** alebo **Terminal** addon
-   - Zdrojový adresár: `/addon_configs/<overseerr-slug>/`
-   - Cieľový adresár: `/addon_configs/<seerr-slug>/`
-3. Spusti Seerr addon — migrácia prebehne automaticky pri štarte.
-4. Po overení funkčnosti môžeš odinštalovať Overseerr addon.
+## Configuration
 
-> Pred migráciou odporúčame zálohu: skopíruj celý adresár niekde bezpečne.
+```yaml
+TZ: Europe/Bratislava
+LOG_LEVEL: info
+```
+
+## Migrating from Overseerr
+
+Seerr automatically migrates your data on first startup. Steps:
+
+1. **Stop** the Overseerr add-on in HA.
+2. Copy the contents of the Overseerr add-on config folder into the Seerr add-on config folder using the HA **File editor** or **Terminal** add-on:
+   - Source: `/addon_configs/<overseerr-slug>/`
+   - Destination: `/addon_configs/<seerr-slug>/`
+3. Start the Seerr add-on — migration runs automatically on startup.
+4. Once you have verified everything works, you can uninstall the Overseerr add-on.
+
+> Back up your data before migrating by copying the folder somewhere safe.
+
+## External Port
+
+- `5055/tcp` — Web UI and API.

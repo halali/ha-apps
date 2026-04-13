@@ -1,18 +1,18 @@
 # Home Assistant Add-on: Sonarr
 
-Smart PVR pre TV seriály. Sleduje RSS feedy tvojho indexera a automaticky sťahuje nové epizódy.
+Smart PVR for TV series. Monitors your indexer RSS feeds and automatically downloads new episodes.
 
-## O add-one
+## About
 
-Postavený na [LinuxServer.io](https://docs.linuxserver.io/images/docker-sonarr/) image-och. Podporuje **HA Ingress** (tlačítko v sidebare) aj **externý port 8989** (pre mobilnú app, integráciu s Overseerr, Bazarr).
+Built on [LinuxServer.io](https://docs.linuxserver.io/images/docker-sonarr/) images. Supports **HA Ingress** (sidebar button) and **external port 8989** (for the mobile app, Seerr integration, Bazarr integration).
 
-## Inštalácia
+## Installation
 
-1. Uisti sa, že máš pridaný repozitár `https://github.com/halali/ha-apps`.
-2. V **Settings → Add-ons → Add-on Store** nájdi **Sonarr** a klikni **Install**.
-3. Spusti add-on a klikni **Open Web UI** v sidebare.
+1. Make sure the repository `https://github.com/halali/ha-apps` is added.
+2. In **Settings → Add-ons → Add-on Store** find **Sonarr** and click **Install**.
+3. Start the add-on and click **Open Web UI** in the sidebar.
 
-## Konfigurácia
+## Configuration
 
 ```yaml
 PUID: 0
@@ -21,26 +21,26 @@ TZ: Europe/Bratislava
 reset_auth: false
 ```
 
-- **PUID / PGID** — user ID, pod ktorým beží Sonarr. Pre prístup k `/media` možno budeš chcieť 1000.
-- **TZ** — timezone pre plánovanie.
-- **reset_auth** — ak `true`, pri štarte deaktivuje autentifikáciu (užitočné keď používaš iba Ingress a nechceš dvojité prihlasovanie).
+- **PUID / PGID** — user ID Sonarr runs as. Set to `1000` if you need write access to `/media`.
+- **TZ** — timezone for scheduling.
+- **reset_auth** — if `true`, disables authentication on startup (useful when using Ingress only and want to avoid double login).
 
-## Cesty
+## Paths
 
-| HA cesta | Cesta v kontajneri | Použitie |
-|----------|---------------------|----------|
-| `/addon_configs/<slug>_sonarr` | `/config` | Databáza, nastavenia, logy |
-| `/media` | `/media` | TV seriály |
-| `/share` | `/share` | Zdieľané dáta |
+| HA path | Container path | Purpose |
+|---------|----------------|---------|
+| `/addon_configs/<slug>_sonarr` | `/config` | Database, settings, logs |
+| `/media` | `/media` | TV series |
+| `/share` | `/share` | Shared data |
 
-Sťahovacie adresáre (torrenty, usenet) si namapuj do `/share` alebo `/media`.
+Map your download directories (torrents, usenet) into `/share` or `/media`.
 
-## Externý port
+## External Port
 
-- `8989/tcp` — Web UI a API.
+- `8989/tcp` — Web UI and API.
 
-Používaj tento port pre mobilnú **Sonarr** app, **Overseerr** integráciu, **Bazarr** integráciu atď.
+Use this port for the **Sonarr** mobile app, **Seerr** integration, **Bazarr** integration, etc.
 
-## API kľúč
+## API Key
 
-API kľúč nájdeš v Sonarr **Settings → General → API Key**.
+Find the API key in Sonarr under **Settings → General → API Key**.

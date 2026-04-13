@@ -1,36 +1,32 @@
 # Halali — Home Assistant Add-ons
 
-Kolekcia Home Assistant add-onov pre populárne *arr aplikácie postavené na [LinuxServer.io](https://www.linuxserver.io/) image-och. Všetky add-ony podporujú **Home Assistant Ingress** (tlačítko v sidebare), **externý port** pre priame API a mobilné aplikácie a **automatické aktualizácie** pri vydaní novej upstream verzie.
+A collection of Home Assistant add-ons for popular *arr applications built on [LinuxServer.io](https://www.linuxserver.io/) images. All add-ons support **Home Assistant Ingress** (sidebar button), an **external port** for direct API access and mobile apps, and **automatic updates** when a new upstream version is released.
 
-## Inštalácia repozitára
+## Repository Installation
 
-1. V Home Assistant otvor **Settings → Add-ons → Add-on Store**.
-2. Klikni na menu (tri bodky vpravo hore) → **Repositories**.
-3. Pridaj URL: `https://github.com/halali/ha-apps`
-4. Po chvíli sa zobrazia add-ony v store.
+1. In Home Assistant open **Settings → Add-ons → Add-on Store**.
+2. Click the menu (three dots top right) → **Repositories**.
+3. Add URL: `https://github.com/halali/ha-apps`
+4. The add-ons will appear in the store shortly.
 
-## Dostupné add-ony
+## Available Add-ons
 
-| Add-on | Popis | Upstream |
-|--------|-------|----------|
-| [Sonarr](./sonarr) | Správa a sťahovanie TV seriálov | [linuxserver/sonarr](https://hub.docker.com/r/linuxserver/sonarr) |
-| [Radarr](./radarr) | Správa a sťahovanie filmov | [linuxserver/radarr](https://hub.docker.com/r/linuxserver/radarr) |
-| [Bazarr](./bazarr) | Automatické sťahovanie titulkov | [linuxserver/bazarr](https://hub.docker.com/r/linuxserver/bazarr) |
-| [Seerr](./seerr) | Request management pre Plex/Jellyfin/Emby — nástupca Overseerr | [seerr-team/seerr](https://github.com/seerr-team/seerr) |
-| [Prowlarr](./prowlarr) | Indexer manager pre Sonarr, Radarr a iné *arr apps | [linuxserver/prowlarr](https://hub.docker.com/r/linuxserver/prowlarr) |
+| Add-on | Description | Upstream |
+|--------|-------------|----------|
+| [Sonarr](./sonarr) | TV series management and download automation | [linuxserver/sonarr](https://hub.docker.com/r/linuxserver/sonarr) |
+| [Radarr](./radarr) | Movie collection management and download automation | [linuxserver/radarr](https://hub.docker.com/r/linuxserver/radarr) |
+| [Bazarr](./bazarr) | Automatic subtitle downloading for Sonarr and Radarr | [linuxserver/bazarr](https://hub.docker.com/r/linuxserver/bazarr) |
+| [Prowlarr](./prowlarr) | Indexer manager and proxy for Sonarr, Radarr and other *arr apps | [linuxserver/prowlarr](https://hub.docker.com/r/linuxserver/prowlarr) |
+| [Seerr](./seerr) | Media request manager for Plex, Jellyfin and Emby — successor to Overseerr | [seerr-team/seerr](https://github.com/seerr-team/seerr) |
 
-## Funkcie
+## Features
 
-- ✅ **HA Ingress** — otvor aplikáciu priamo z HA sidebaru, bez loginu
-- ✅ **Externý port** — priamy prístup z LAN pre API klientov (napr. Overseerr ↔ Sonarr, mobilné apps)
-- ✅ **Multi-arch** — `amd64`, `aarch64`, `armv7`, `armhf`
-- ✅ **Auto-update** — GitHub Actions denne kontrolujú nové verzie a automaticky bumpnú add-on
-- ✅ **Persistentné dáta** — konfigurácia v `/addon_configs/<slug>`, médiá v `/media`
+- ✅ **HA Ingress** — open the app directly from the HA sidebar, no separate login
+- ✅ **External port** — direct LAN access for API clients (e.g. Seerr ↔ Sonarr, mobile apps)
+- ✅ **amd64** — built for x86-64 hosts
+- ✅ **Auto-update** — GitHub Actions checks for new upstream versions daily and bumps the add-on automatically
+- ✅ **Persistent data** — configuration stored in `/addon_configs/<slug>`, media in `/media`
 
-## Podporované architektúry
-
-Všetky add-ony podporujú: `amd64`, `aarch64`, `armv7`, `armhf`.
-
-## Licencia
+## License
 
 MIT © Halali

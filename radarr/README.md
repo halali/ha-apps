@@ -1,18 +1,18 @@
 # Home Assistant Add-on: Radarr
 
-Správa filmovej kolekcie — automatické sťahovanie a monitorovanie filmov cez Usenet / BitTorrent.
+Movie collection manager — automatic downloading and monitoring of movies via Usenet / BitTorrent.
 
-## O add-one
+## About
 
-Postavený na [LinuxServer.io](https://docs.linuxserver.io/images/docker-radarr/) image-och. Podporuje **HA Ingress** aj **externý port 7878**.
+Built on [LinuxServer.io](https://docs.linuxserver.io/images/docker-radarr/) images. Supports **HA Ingress** and **external port 7878**.
 
-## Inštalácia
+## Installation
 
-1. Pridaj repozitár `https://github.com/halali/ha-apps`.
-2. Nainštaluj **Radarr** zo store.
-3. Spusti a otvor cez sidebar.
+1. Add the repository `https://github.com/halali/ha-apps`.
+2. Install **Radarr** from the store.
+3. Start it and open via the sidebar.
 
-## Konfigurácia
+## Configuration
 
 ```yaml
 PUID: 0
@@ -21,14 +21,18 @@ TZ: Europe/Bratislava
 reset_auth: false
 ```
 
-## Cesty
+- **PUID / PGID** — user ID Radarr runs as. Set to `1000` if you need write access to `/media`.
+- **TZ** — timezone for scheduling.
+- **reset_auth** — if `true`, disables authentication on startup.
 
-| HA cesta | Kontajner | Popis |
-|----------|-----------|-------|
-| `/addon_configs/<slug>_radarr` | `/config` | Databáza, nastavenia |
-| `/media` | `/media` | Filmy |
-| `/share` | `/share` | Zdieľané dáta |
+## Paths
 
-## Externý port
+| HA path | Container path | Purpose |
+|---------|----------------|---------|
+| `/addon_configs/<slug>_radarr` | `/config` | Database, settings |
+| `/media` | `/media` | Movies |
+| `/share` | `/share` | Shared data |
 
-- `7878/tcp` — Web UI a API.
+## External Port
+
+- `7878/tcp` — Web UI and API.
