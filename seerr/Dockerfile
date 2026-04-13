@@ -8,6 +8,11 @@ USER root
 # su-exec: minimal privilege-drop tool for Alpine
 RUN apk add --no-cache su-exec
 
+# Point Seerr at /config (HA addon_config mount) instead of /app/config.
+# This avoids the symlink hack and suppresses the "volume not configured" warning
+# because CONFIG_DIRECTORY changes where Seerr looks for the DOCKER marker too.
+ENV CONFIG_DIRECTORY=/config
+
 # Copy HA init entrypoint
 COPY rootfs/usr/local/bin/ha-seerr-init.sh /usr/local/bin/ha-seerr-init.sh
 RUN chmod +x /usr/local/bin/ha-seerr-init.sh

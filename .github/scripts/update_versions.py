@@ -25,7 +25,7 @@ import yaml
 from packaging.version import InvalidVersion, Version
 
 ROOT = Path(__file__).resolve().parents[2]
-ADDONS = ["sonarr", "radarr", "bazarr", "overseerr"]
+ADDONS = ["sonarr", "radarr", "bazarr", "prowlarr"]  # seerr uses non-LSIO image, skipped
 DOCKERHUB_URL = (
     "https://hub.docker.com/v2/repositories/linuxserver/{image}/tags"
     "?page_size=100&ordering=last_updated"

@@ -45,7 +45,7 @@ jobs:
           MANUAL_ADDON: ${{ github.event.inputs.addon }}
         run: |
           set -euo pipefail
-          ADDONS='["sonarr","radarr","bazarr","seerr"]'
+          ADDONS='["sonarr","radarr","bazarr","seerr","prowlarr"]'
 
           if [[ -n "$MANUAL_ADDON" ]]; then
             echo "changed=[\"$MANUAL_ADDON\"]" >> "$GITHUB_OUTPUT"
