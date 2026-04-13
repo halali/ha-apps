@@ -16,7 +16,7 @@ Kolekcia Home Assistant add-onov pre populárne *arr aplikácie postavené na [L
 | [Sonarr](./sonarr) | Správa a sťahovanie TV seriálov | [linuxserver/sonarr](https://hub.docker.com/r/linuxserver/sonarr) |
 | [Radarr](./radarr) | Správa a sťahovanie filmov | [linuxserver/radarr](https://hub.docker.com/r/linuxserver/radarr) |
 | [Bazarr](./bazarr) | Automatické sťahovanie titulkov | [linuxserver/bazarr](https://hub.docker.com/r/linuxserver/bazarr) |
-| [Overseerr](./overseerr) | Request management pre Plex/Jellyfin | [linuxserver/overseerr](https://hub.docker.com/r/linuxserver/overseerr) |
+| [Seerr](./seerr) | Request management pre Plex/Jellyfin/Emby — nástupca Overseerr | [seerr-team/seerr](https://github.com/seerr-team/seerr) |
 
 ## Funkcie
 

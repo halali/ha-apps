@@ -1,0 +1,8 @@
+---
+build_from:
+  amd64: ghcr.io/seerr-team/seerr:v3.1.1
+labels:
+  org.opencontainers.image.title: "Seerr"
+  org.opencontainers.image.description: "Seerr add-on pre Home Assistant"
+  org.opencontainers.image.source: "https://github.com/halali/ha-apps"
+  org.opencontainers.image.licenses: "MIT"

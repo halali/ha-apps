@@ -1,10 +1,9 @@
 ---
-name: Overseerr
-version: "1.33.2"
-slug: overseerr
-description: Request management and media discovery tool for Plex / Jellyfin ecosystem.
-url: https://github.com/halali/ha-apps/tree/main/overseerr
-codenotary: notary@home-assistant.io
+name: Seerr
+version: "3.1.1"
+slug: seerr
+description: Open-source media request and discovery manager for Jellyfin, Plex, and Emby. Drop-in replacement for Overseerr — existing data is auto-migrated on first start.
+url: https://github.com/halali/ha-apps/tree/main/seerr
 arch:
   - amd64
 init: false
@@ -17,7 +16,7 @@ ingress: true
 ingress_port: 5055
 ingress_stream: true
 panel_icon: mdi:eye-plus
-panel_title: Overseerr
+panel_title: Seerr
 panel_admin: true
 ports:
   "5055/tcp": 5055
@@ -28,13 +27,9 @@ map:
   - media:ro
   - share:rw
 options:
-  PUID: 0
-  PGID: 0
   TZ: Europe/Bratislava
   LOG_LEVEL: info
 schema:
-  PUID: int
-  PGID: int
   TZ: str
   LOG_LEVEL: list(silly|debug|info|warn|error)
-image: ghcr.io/halali/ha-apps-{arch}-overseerr
+image: ghcr.io/halali/ha-apps-amd64-seerr
