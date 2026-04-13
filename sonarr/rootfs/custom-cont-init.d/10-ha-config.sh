@@ -1,4 +1,5 @@
 #!/usr/bin/with-contenv bash
+# shellcheck shell=bash
 # Init script for Sonarr inside HA add-on.
 # - Ensures UrlBase is empty (HA Ingress with ingress_stream: true handles paths).
 # - Optionally resets auth when reset_auth=true in add-on options.
@@ -9,7 +10,7 @@ set -e
 CONFIG_XML="/config/config.xml"
 
 # Wait until Sonarr's own init created the config
-for i in $(seq 1 30); do
+for _ in $(seq 1 30); do
   [[ -f "$CONFIG_XML" ]] && break
   sleep 1
 done

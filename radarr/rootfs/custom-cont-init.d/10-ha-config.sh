@@ -1,10 +1,11 @@
 #!/usr/bin/with-contenv bash
+# shellcheck shell=bash
 # Init script for Radarr inside HA add-on.
 set -e
 
 CONFIG_XML="/config/config.xml"
 
-for i in $(seq 1 30); do
+for _ in $(seq 1 30); do
   [[ -f "$CONFIG_XML" ]] && break
   sleep 1
 done

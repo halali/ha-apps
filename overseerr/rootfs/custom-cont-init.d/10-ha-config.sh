@@ -1,4 +1,5 @@
 #!/usr/bin/with-contenv bash
+# shellcheck shell=bash
 # Init script for Overseerr inside HA add-on.
 # Overseerr uses /config/settings.json. Ensure trustProxy is enabled so
 # the X-Forwarded-* headers set by HA Ingress are respected.
@@ -6,7 +7,7 @@ set -e
 
 SETTINGS="/config/settings.json"
 
-for i in $(seq 1 30); do
+for _ in $(seq 1 30); do
   [[ -f "$SETTINGS" ]] && break
   sleep 1
 done

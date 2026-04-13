@@ -37,10 +37,14 @@ jobs:
 
       - name: Compute changed add-ons
         id: set-matrix
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          CURRENT_SHA: ${{ github.sha }}
+          EVENT_NAME: ${{ github.event_name }}
+          MANUAL_ADDON: ${{ github.event.inputs.addon }}
         run: |
           set -euo pipefail
           ADDONS='["sonarr","radarr","bazarr","overseerr"]'
-          MANUAL_ADDON='${{ github.event.inputs.addon }}'
 
           if [[ -n "$MANUAL_ADDON" ]]; then
             echo "changed=[\"$MANUAL_ADDON\"]" >> "$GITHUB_OUTPUT"
@@ -48,13 +52,20 @@ jobs:
             exit 0
           fi
 
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
             echo "changed=$ADDONS" >> "$GITHUB_OUTPUT"
             echo "any_changed=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          CHANGED=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" \
+          # Initial commit: before SHA is all zeros — build everything
+          if [[ "$BEFORE_SHA" == "0000000000000000000000000000000000000000" ]]; then
+            echo "changed=$ADDONS" >> "$GITHUB_OUTPUT"
+            echo "any_changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          CHANGED=$(git diff --name-only "$BEFORE_SHA" "$CURRENT_SHA" \
             | awk -F/ '{print $1}' | sort -u)
           FILTERED=$(python3 -c "
           import json, sys

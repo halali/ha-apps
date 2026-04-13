@@ -1,11 +1,12 @@
 #!/usr/bin/with-contenv bash
+# shellcheck shell=bash
 # Init script for Bazarr inside HA add-on.
 # Bazarr uses config.ini (INI format). Ensure base_url is empty and bind 0.0.0.0.
 set -e
 
 CONFIG_INI="/config/config/config.ini"
 
-for i in $(seq 1 30); do
+for _ in $(seq 1 30); do
   [[ -f "$CONFIG_INI" ]] && break
   sleep 1
 done
