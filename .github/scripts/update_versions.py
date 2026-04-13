@@ -25,7 +25,10 @@ import yaml
 from packaging.version import InvalidVersion, Version
 
 ROOT = Path(__file__).resolve().parents[2]
-ADDONS = ["sonarr", "radarr", "bazarr", "prowlarr"]  # seerr uses non-LSIO image, skipped
+LSIO_ADDONS = ["sonarr", "radarr", "bazarr", "prowlarr"]
+GITHUB_ADDONS = {
+    "seerr": "seerr-team/seerr",
+}
 DOCKERHUB_URL = (
     "https://hub.docker.com/v2/repositories/linuxserver/{image}/tags"
     "?page_size=100&ordering=last_updated"
@@ -118,11 +121,40 @@ def prepend_changelog(path: Path, version: str, image: str) -> None:
     path.write_text(new_content)
 
 
+def fetch_latest_github_release(repo: str) -> Optional[str]:
+    """Return the latest semver tag from a GitHub repo (strips leading 'v')."""
+    url = f"https://api.github.com/repos/{repo}/releases/latest"
+    resp = requests.get(url, timeout=30)
+    resp.raise_for_status()
+    tag = resp.json().get("tag_name", "")
+    ver_str = tag.lstrip("v")
+    try:
+        Version(ver_str)
+        return ver_str
+    except InvalidVersion:
+        return None
+
+
+def update_github_build_yaml(path: Path, repo: str, new_version: str) -> bool:
+    """Update the ghcr.io image tag in build.yaml for a GitHub-sourced addon."""
+    owner = repo.split("/")[1]
+    raw = path.read_text()
+    new_raw = re.sub(
+        rf"(ghcr\.io/{re.escape(repo.split('/')[0])}/{re.escape(owner)}):[^\s\"']+",
+        rf"\1:v{new_version}",
+        raw,
+    )
+    if new_raw != raw:
+        path.write_text(new_raw)
+        return True
+    return False
+
+
 def main() -> int:
     summary_lines: list[str] = []
     changed_any = False
 
-    for addon in ADDONS:
+    for addon in LSIO_ADDONS:
         addon_dir = ROOT / addon
         build_yaml = addon_dir / "build.yaml"
         config_yaml = addon_dir / "config.yaml"
@@ -146,6 +178,30 @@ def main() -> int:
 
         if cfg_changed or bld_changed:
             prepend_changelog(changelog, latest, image)
+            summary_lines.append(f"- **{addon}**: {old_ver} → {latest}")
+            changed_any = True
+            print(f"[update] {addon}: {old_ver} -> {latest}")
+        else:
+            print(f"[ok] {addon}: already at {latest}")
+
+    # GitHub-release based addons (e.g. Seerr)
+    for addon, repo in GITHUB_ADDONS.items():
+        addon_dir = ROOT / addon
+        build_yaml = addon_dir / "build.yaml"
+        config_yaml = addon_dir / "config.yaml"
+        if not build_yaml.exists() or not config_yaml.exists():
+            print(f"[skip] {addon}: missing build.yaml or config.yaml")
+            continue
+
+        latest = fetch_latest_github_release(repo)
+        if not latest:
+            print(f"[warn] {addon}: could not fetch latest release from {repo}")
+            continue
+
+        cfg_changed, old_ver = update_config_yaml(config_yaml, latest)
+        bld_changed = update_github_build_yaml(build_yaml, repo, latest)
+
+        if cfg_changed or bld_changed:
             summary_lines.append(f"- **{addon}**: {old_ver} → {latest}")
             changed_any = True
             print(f"[update] {addon}: {old_ver} -> {latest}")
