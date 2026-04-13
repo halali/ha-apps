@@ -185,6 +185,10 @@ def main() -> int:
             print(f"[ok] {addon}: already at {latest}")
 
     # GitHub-release based addons (e.g. Seerr)
+    # Versioning scheme: <upstream>.<addon_patch> e.g. "3.1.1.1"
+    # The 4th component is a local addon patch counter and is reset when
+    # upstream bumps. We only update when upstream releases a newer version
+    # than the upstream base already tracked (first 3 components).
     for addon, repo in GITHUB_ADDONS.items():
         addon_dir = ROOT / addon
         build_yaml = addon_dir / "build.yaml"
@@ -198,6 +202,23 @@ def main() -> int:
             print(f"[warn] {addon}: could not fetch latest release from {repo}")
             continue
 
+        # Read current version and strip optional 4th addon-patch component
+        raw_cfg = config_yaml.read_text()
+        m = re.search(r'^version:\s*"?([^"\n]+)"?\s*$', raw_cfg, flags=re.MULTILINE)
+        current_full = m.group(1) if m else "0"
+        parts = current_full.split(".")
+        current_upstream = ".".join(parts[:3])  # e.g. "3.1.1" from "3.1.1.1"
+
+        try:
+            upstream_newer = Version(latest) > Version(current_upstream)
+        except InvalidVersion:
+            upstream_newer = False
+
+        if not upstream_newer:
+            print(f"[ok] {addon}: upstream still at {latest} (addon is {current_full})")
+            continue
+
+        # Upstream has a new release — reset addon patch, set to bare upstream version
         cfg_changed, old_ver = update_config_yaml(config_yaml, latest)
         bld_changed = update_github_build_yaml(build_yaml, repo, latest)
 
@@ -205,8 +226,6 @@ def main() -> int:
             summary_lines.append(f"- **{addon}**: {old_ver} → {latest}")
             changed_any = True
             print(f"[update] {addon}: {old_ver} -> {latest}")
-        else:
-            print(f"[ok] {addon}: already at {latest}")
 
     summary_path = ROOT / ".github" / ".update_summary"
     summary_path.write_text("\n".join(summary_lines) if summary_lines else "")
