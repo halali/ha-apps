@@ -5,21 +5,23 @@ FROM ${BUILD_FROM}
 # Switch to root for setup — dropped back to node via su-exec in entrypoint
 USER root
 
-# su-exec: minimal privilege-drop tool for Alpine
-RUN apk add --no-cache su-exec
+# nginx: reverse proxy with sub_filter for Next.js path rewriting
+# jq: parse HA Supervisor API response for ingress_entry
+# su-exec: privilege drop to node user (UID 1000)
+# hadolint ignore=DL3018
+RUN apk add --no-cache nginx jq su-exec
 
-# Point Seerr at /config (HA addon_config mount) instead of /app/config.
-# This avoids the symlink hack and suppresses the "volume not configured" warning
-# because CONFIG_DIRECTORY changes where Seerr looks for the DOCKER marker too.
+# Seerr config dir: HA mounts addon_config as /config
 ENV CONFIG_DIRECTORY=/config
+# Seerr internal port — nginx listens on 5055 and proxies here
+ENV PORT=5056
 
-# Copy HA init entrypoint
-COPY rootfs/usr/local/bin/ha-seerr-init.sh /usr/local/bin/ha-seerr-init.sh
+# Copy nginx ingress config template and init entrypoint
+COPY rootfs/ /
 RUN chmod +x /usr/local/bin/ha-seerr-init.sh
 
 EXPOSE 5055
 
-# Override Seerr's default CMD — our init script handles setup then execs npm start
 ENTRYPOINT ["/usr/local/bin/ha-seerr-init.sh"]
 
 ARG BUILD_DATE
