@@ -1,6 +1,6 @@
 ---
 name: Prowlarr
-version: "2.3.5.5328"
+version: "2.3.5.5327"
 slug: prowlarr
 description: Indexer manager and proxy for Sonarr, Radarr, and other *arr apps. Manages all torrent and Usenet indexers in one place and syncs them automatically.
 url: https://github.com/halali/ha-apps/tree/main/prowlarr

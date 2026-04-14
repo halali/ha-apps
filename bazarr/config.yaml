@@ -1,6 +1,6 @@
 ---
 name: Bazarr
-version: "1.4.5.1"
+version: "1.5.6"
 slug: bazarr
 description: Companion application to Sonarr and Radarr — manages and downloads subtitles.
 url: https://github.com/halali/ha-apps/tree/main/bazarr
