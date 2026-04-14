@@ -70,37 +70,30 @@ def get_lsio_image(build_yaml: Path) -> Optional[str]:
 def fetch_latest_version(image: str) -> Optional[tuple[str, str]]:
     """Return (version_for_config, docker_tag_for_build) for the latest release.
 
+    Fetches only the first page (100 tags, ordered by last_updated desc).
+    The newest release is always in the first page — no pagination needed.
+
     Some LSIO images only publish full tags like '2.3.5.5327-ls141' without a
     short '2.3.5.5327' alias.  We use the clean version in config.yaml but must
     use the actual published tag in build.yaml.  Prefer the short tag when it
     exists; fall back to the full '-ls' tag otherwise.
     """
     url = DOCKERHUB_URL.format(image=image)
-    # ver_str -> list of all matching raw tag names for that version
     version_tags: dict[str, list[str]] = {}
-    while url:
-        resp = get_with_retry(url)
-        payload = resp.json()
-        for item in payload.get("results", []):
-            name = item.get("name", "")
-            if name in SKIP_TAGS:
-                continue
-            m = TAG_RE.match(name)
-            if not m:
-                continue
-            ver_str = m.group("ver")
-            try:
-                Version(ver_str)
-            except InvalidVersion:
-                continue
-            version_tags.setdefault(ver_str, []).append(name)
-        url = payload.get("next")
-        # Stop early: 200 distinct version entries is more than enough
-        # to find the latest stable release (avoids Docker Hub 429s)
-        if len(version_tags) > 200:
-            break
-        # Small delay to avoid hammering Docker Hub
-        time.sleep(0.5)
+    resp = get_with_retry(url)
+    for item in resp.json().get("results", []):
+        name = item.get("name", "")
+        if name in SKIP_TAGS:
+            continue
+        m = TAG_RE.match(name)
+        if not m:
+            continue
+        ver_str = m.group("ver")
+        try:
+            Version(ver_str)
+        except InvalidVersion:
+            continue
+        version_tags.setdefault(ver_str, []).append(name)
     if not version_tags:
         return None
     latest_ver = max(version_tags.keys(), key=lambda v: Version(v))
