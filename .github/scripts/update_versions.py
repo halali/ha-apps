@@ -17,12 +17,28 @@ import json
 import os
 import re
 import sys
+import time
 from pathlib import Path
 from typing import Optional
 
 import requests
 import yaml
 from packaging.version import InvalidVersion, Version
+
+
+def get_with_retry(url: str, max_retries: int = 3, timeout: int = 30) -> requests.Response:
+    """GET with exponential backoff on 429 / 5xx."""
+    for attempt in range(max_retries):
+        resp = requests.get(url, timeout=timeout)
+        if resp.status_code == 429 or resp.status_code >= 500:
+            wait = 2 ** attempt * 5  # 5s, 10s, 20s
+            print(f"[warn] HTTP {resp.status_code} from {url} — retrying in {wait}s")
+            time.sleep(wait)
+            continue
+        resp.raise_for_status()
+        return resp
+    resp.raise_for_status()
+    return resp
 
 ROOT = Path(__file__).resolve().parents[2]
 LSIO_ADDONS = ["sonarr", "radarr", "bazarr", "prowlarr"]
@@ -63,8 +79,7 @@ def fetch_latest_version(image: str) -> Optional[tuple[str, str]]:
     # ver_str -> list of all matching raw tag names for that version
     version_tags: dict[str, list[str]] = {}
     while url:
-        resp = requests.get(url, timeout=30)
-        resp.raise_for_status()
+        resp = get_with_retry(url)
         payload = resp.json()
         for item in payload.get("results", []):
             name = item.get("name", "")
@@ -80,8 +95,12 @@ def fetch_latest_version(image: str) -> Optional[tuple[str, str]]:
                 continue
             version_tags.setdefault(ver_str, []).append(name)
         url = payload.get("next")
-        if sum(len(v) for v in version_tags.values()) > 500:
+        # Stop early: 200 distinct version entries is more than enough
+        # to find the latest stable release (avoids Docker Hub 429s)
+        if len(version_tags) > 200:
             break
+        # Small delay to avoid hammering Docker Hub
+        time.sleep(0.5)
     if not version_tags:
         return None
     latest_ver = max(version_tags.keys(), key=lambda v: Version(v))
