@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+*.local
+
+# Tauri
+src-tauri/target/
+src-tauri/Cargo.lock
+src-tauri/gen/
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# Runtime user data (in case anyone runs from repo)
+/tmp-history/
