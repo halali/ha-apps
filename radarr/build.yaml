@@ -6,7 +6,7 @@ build_from:
   armhf: lscr.io/linuxserver/radarr:6.1.1.10360-ls300
 labels:
   org.opencontainers.image.title: "Radarr"
-  org.opencontainers.image.description: "Radarr add-on pre Home Assistant"
+  org.opencontainers.image.description: "Radarr add-on for Home Assistant"
   org.opencontainers.image.source: "https://github.com/halali/ha-apps"
   org.opencontainers.image.licenses: "MIT"
 args:

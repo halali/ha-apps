@@ -2,8 +2,11 @@
 name: Seerr
 version: "3.2.0"
 slug: seerr
-description: Open-source media request and discovery manager for Jellyfin, Plex, and Emby. Drop-in replacement for Overseerr — existing data is auto-migrated on first start.
+description: >-
+  Open-source media request and discovery manager for Jellyfin, Plex, and Emby.
+  Drop-in replacement for Overseerr — existing data is auto-migrated on first start.
 url: https://github.com/halali/ha-apps/tree/main/seerr
+codenotary: notary@home-assistant.io
 arch:
   - amd64
 init: false
@@ -21,7 +24,7 @@ panel_admin: true
 ports:
   "5055/tcp": 5055
 ports_description:
-  "5055/tcp": Web UI / API (pre webhook integrácie a externé klientov)
+  "5055/tcp": Web UI / API (for webhook integrations and external clients)
 map:
   - addon_config:rw
   - media:ro

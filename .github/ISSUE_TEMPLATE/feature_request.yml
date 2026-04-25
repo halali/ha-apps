@@ -1,0 +1,39 @@
+---
+name: Feature request
+description: Suggest an enhancement or new add-on
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - Existing add-on
+        - New add-on
+        - Repository tooling (CI, auto-update, etc.)
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: What problem are you trying to solve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Describe the change. For new add-ons, link to the upstream image / repo and the latest release tag.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false

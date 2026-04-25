@@ -13,7 +13,6 @@ boot: auto
 host_network: false
 hassio_api: true
 hassio_role: default
-homeassistant_api: false
 ingress: true
 ingress_port: 8989
 ingress_stream: true
@@ -23,7 +22,7 @@ panel_admin: true
 ports:
   "8989/tcp": 8989
 ports_description:
-  "8989/tcp": Web UI / API (pre mobilné apps, Overseerr integráciu)
+  "8989/tcp": Web UI / API (for mobile apps, Seerr and Bazarr integration)
 map:
   - addon_config:rw
   - media:rw

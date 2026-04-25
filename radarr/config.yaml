@@ -22,7 +22,7 @@ panel_admin: true
 ports:
   "7878/tcp": 7878
 ports_description:
-  "7878/tcp": Web UI / API (pre mobilné apps, Overseerr, Bazarr integráciu)
+  "7878/tcp": Web UI / API (for mobile apps, Overseerr and Bazarr integration)
 map:
   - addon_config:rw
   - media:rw

@@ -11,13 +11,13 @@ A collection of Home Assistant add-ons for popular *arr applications built on [L
 
 ## Available Add-ons
 
-| Add-on | Description | Upstream |
-|--------|-------------|----------|
-| [Sonarr](./sonarr) | TV series management and download automation | [linuxserver/sonarr](https://hub.docker.com/r/linuxserver/sonarr) |
-| [Radarr](./radarr) | Movie collection management and download automation | [linuxserver/radarr](https://hub.docker.com/r/linuxserver/radarr) |
-| [Bazarr](./bazarr) | Automatic subtitle downloading for Sonarr and Radarr | [linuxserver/bazarr](https://hub.docker.com/r/linuxserver/bazarr) |
-| [Prowlarr](./prowlarr) | Indexer manager and proxy for Sonarr, Radarr and other *arr apps | [linuxserver/prowlarr](https://hub.docker.com/r/linuxserver/prowlarr) |
-| [Seerr](./seerr) | Media request manager for Plex, Jellyfin and Emby — successor to Overseerr | [seerr-team/seerr](https://github.com/seerr-team/seerr) |
+| Add-on | Port | Description | Upstream |
+|--------|------|-------------|----------|
+| [Sonarr](./sonarr) | `8989` | TV series management and download automation | [linuxserver/sonarr](https://hub.docker.com/r/linuxserver/sonarr) |
+| [Radarr](./radarr) | `7878` | Movie collection management and download automation | [linuxserver/radarr](https://hub.docker.com/r/linuxserver/radarr) |
+| [Bazarr](./bazarr) | `6767` | Automatic subtitle downloading for Sonarr and Radarr | [linuxserver/bazarr](https://hub.docker.com/r/linuxserver/bazarr) |
+| [Prowlarr](./prowlarr) | `9696` | Indexer manager and proxy for Sonarr, Radarr and other *arr apps | [linuxserver/prowlarr](https://hub.docker.com/r/linuxserver/prowlarr) |
+| [Seerr](./seerr) | `5055` | Media request manager for Plex, Jellyfin and Emby — successor to Overseerr | [seerr-team/seerr](https://github.com/seerr-team/seerr) |
 
 ## Features
 
@@ -26,6 +26,10 @@ A collection of Home Assistant add-ons for popular *arr applications built on [L
 - ✅ **amd64** — built for x86-64 hosts
 - ✅ **Auto-update** — GitHub Actions checks for new upstream versions daily and bumps the add-on automatically
 - ✅ **Persistent data** — configuration stored in `/addon_configs/<slug>`, media in `/media`
+
+## Contributing
+
+Bug reports and pull requests are welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md). For security issues please follow [SECURITY.md](./SECURITY.md).
 
 ## License
 

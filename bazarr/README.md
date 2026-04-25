@@ -18,6 +18,8 @@ TZ: Europe/Bratislava
 - **PUID / PGID** — user ID Bazarr runs as. Set to `1000` if you need write access to `/media`.
 - **TZ** — timezone for scheduling.
 
+> Bazarr does not enforce a separate login by default — Home Assistant authenticates the Ingress session, so no `reset_auth` option is exposed.
+
 ## Paths
 
 | HA path | Container path | Purpose |

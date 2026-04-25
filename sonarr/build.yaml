@@ -6,7 +6,7 @@ build_from:
   armhf: lscr.io/linuxserver/sonarr:4.0.17.2952-ls309
 labels:
   org.opencontainers.image.title: "Sonarr"
-  org.opencontainers.image.description: "Sonarr add-on pre Home Assistant"
+  org.opencontainers.image.description: "Sonarr add-on for Home Assistant"
   org.opencontainers.image.source: "https://github.com/halali/ha-apps"
   org.opencontainers.image.licenses: "MIT"
 args:

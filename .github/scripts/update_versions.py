@@ -133,9 +133,23 @@ def update_config_yaml(path: Path, new_version: str) -> tuple[bool, str]:
     return False, old_version
 
 
-def prepend_changelog(path: Path, version: str, image: str) -> None:
-    header = f"## {version}\n\n- Bumped LinuxServer.io `{image}` to `{version}` (auto-update).\n\n"
+def prepend_changelog(path: Path, version: str, source: str) -> None:
+    """Prepend a new release entry to CHANGELOG.md.
+
+    `source` is either an LSIO image name (e.g. "sonarr") or a GitHub
+    "owner/repo" string — we render it accordingly.
+    """
+    if "/" in source:
+        line = f"- Bumped upstream `{source}` to `v{version}` (auto-update)."
+    else:
+        line = f"- Bumped LinuxServer.io `{source}` to `{version}` (auto-update)."
+    header = f"## {version}\n\n{line}\n\n"
     existing = path.read_text() if path.exists() else "# Changelog\n\n"
+    # Skip if the top entry already references this exact version (idempotent).
+    if re.search(rf"^##\s+{re.escape(version)}\s*$", existing, flags=re.MULTILINE):
+        first_heading = re.search(r"^##\s+(\S+)", existing, flags=re.MULTILINE)
+        if first_heading and first_heading.group(1) == version:
+            return
     # Put new entry just after the top "# Changelog" line
     if existing.startswith("# Changelog"):
         parts = existing.split("\n", 1)
@@ -248,13 +262,15 @@ def main() -> int:
         bld_changed = update_github_build_yaml(build_yaml, repo, latest)
 
         if cfg_changed or bld_changed:
+            prepend_changelog(addon_dir / "CHANGELOG.md", latest, repo)
             summary_lines.append(f"- **{addon}**: {old_ver} → {latest}")
             changed_any = True
             print(f"[update] {addon}: {old_ver} -> {latest}")
 
     summary_path = ROOT / ".github" / ".update_summary"
     summary_path.write_text("\n".join(summary_lines) if summary_lines else "")
-    return 0 if changed_any or True else 1
+    # Always succeed: "no updates today" is not a failure for this workflow.
+    return 0
 
 
 if __name__ == "__main__":
