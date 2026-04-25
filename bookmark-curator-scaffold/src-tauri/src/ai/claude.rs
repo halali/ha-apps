@@ -129,3 +129,23 @@ fn strip_code_fence(s: &str) -> &str {
         .unwrap_or(s);
     s.strip_suffix("```").unwrap_or(s).trim()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::strip_code_fence;
+
+    #[test]
+    fn strips_json_fence() {
+        assert_eq!(strip_code_fence("```json\n[1,2,3]\n```"), "[1,2,3]");
+    }
+
+    #[test]
+    fn strips_plain_fence() {
+        assert_eq!(strip_code_fence("```\n{\"a\":1}\n```"), "{\"a\":1}");
+    }
+
+    #[test]
+    fn passes_through_clean_json() {
+        assert_eq!(strip_code_fence("[1,2,3]"), "[1,2,3]");
+    }
+}

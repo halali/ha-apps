@@ -193,3 +193,137 @@ fn dedupe(mut entries: Vec<HistoryEntry>) -> Vec<HistoryEntry> {
     entries.retain(|e| seen.insert(e.url.clone()));
     entries
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rusqlite::params;
+
+    #[test]
+    fn chrome_time_round_trips_through_unix_epoch() {
+        let unix = Utc.with_ymd_and_hms(2024, 6, 1, 12, 30, 0).unwrap();
+        let chrome = chrome_time(unix);
+        let back = from_chrome_time(chrome);
+        assert_eq!(back, unix);
+    }
+
+    #[test]
+    fn chrome_epoch_zero_decodes_to_1601() {
+        let zero = from_chrome_time(0);
+        assert_eq!(zero.format("%Y-%m-%d").to_string(), "1601-01-01");
+    }
+
+    #[test]
+    fn dedupe_keeps_highest_visit_count() {
+        let now = Utc::now();
+        let entries = vec![
+            HistoryEntry {
+                url: "https://example.com/".into(),
+                title: "low".into(),
+                visit_count: 2,
+                last_visit: now,
+                domain: "example.com".into(),
+            },
+            HistoryEntry {
+                url: "https://example.com/".into(),
+                title: "high".into(),
+                visit_count: 50,
+                last_visit: now,
+                domain: "example.com".into(),
+            },
+            HistoryEntry {
+                url: "https://other.test/".into(),
+                title: "other".into(),
+                visit_count: 1,
+                last_visit: now,
+                domain: "other.test".into(),
+            },
+        ];
+        let out = dedupe(entries);
+        assert_eq!(out.len(), 2);
+        let example = out.iter().find(|e| e.url == "https://example.com/").unwrap();
+        assert_eq!(example.visit_count, 50);
+        assert_eq!(example.title, "high");
+    }
+
+    /// End-to-end test against a synthetic SQLite file matching Chrome's schema.
+    /// This is what lets us trust the reader on Linux CI even though the real
+    /// Chrome paths only exist on macOS.
+    #[test]
+    fn reads_synthetic_history_db_and_applies_filters() {
+        let tmp = tempdir();
+        let history_path = tmp.join("History");
+        let conn = Connection::open(&history_path).unwrap();
+        conn.execute_batch(
+            "CREATE TABLE urls (
+                id INTEGER PRIMARY KEY,
+                url LONGVARCHAR,
+                title LONGVARCHAR,
+                visit_count INTEGER DEFAULT 0,
+                last_visit_time INTEGER NOT NULL DEFAULT 0
+            );",
+        )
+        .unwrap();
+
+        let now = Utc::now();
+        let recent = chrome_time(now - Duration::days(1));
+        let old = chrome_time(now - Duration::days(400));
+
+        let rows: &[(&str, &str, i64, i64)] = &[
+            // kept
+            ("https://docs.rs/tokio", "tokio docs", 12, recent),
+            // dropped: visit_count below threshold
+            ("https://low.test/", "low traffic", 1, recent),
+            // dropped: outside lookback window
+            ("https://ancient.test/", "old", 99, old),
+            // dropped: blocklisted domain
+            ("https://www.google.com/search?q=foo", "google search", 30, recent),
+            // dropped: empty title
+            ("https://no-title.test/", "", 5, recent),
+            // dropped: invalid url
+            ("not a url", "weird", 5, recent),
+        ];
+        for (url, title, vc, lvt) in rows {
+            conn.execute(
+                "INSERT INTO urls (url, title, visit_count, last_visit_time) VALUES (?, ?, ?, ?)",
+                params![url, title, vc, lvt],
+            )
+            .unwrap();
+        }
+        drop(conn);
+
+        let profile = BrowserProfile {
+            browser: BrowserKind::Chrome,
+            name: "Test".into(),
+            path: tmp.clone(),
+        };
+        let scan = ScanConfig {
+            lookback_days: 90,
+            min_visit_count: 2,
+            blocklist_domains: vec!["google.com".into()],
+        };
+
+        let entries = read_history(&profile, &scan).unwrap();
+        assert_eq!(entries.len(), 1, "got: {entries:?}");
+        assert_eq!(entries[0].url, "https://docs.rs/tokio");
+        assert_eq!(entries[0].domain, "docs.rs");
+        assert_eq!(entries[0].visit_count, 12);
+
+        std::fs::remove_dir_all(&tmp).ok();
+    }
+
+    fn tempdir() -> PathBuf {
+        let mut p = std::env::temp_dir();
+        p.push(format!(
+            "bookmark-curator-test-{}-{}",
+            std::process::id(),
+            // Cheap unique suffix without bringing in a UUID dep.
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&p).unwrap();
+        p
+    }
+}

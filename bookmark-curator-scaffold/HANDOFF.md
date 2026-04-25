@@ -21,10 +21,26 @@ auto-organise it into a Netscape bookmarks file.
 
 Verified in the source session:
 
-- `cargo check --lib` — passes
-- `cargo test --lib` — 1/1 passes (`export::tests::renders_nested_folders`)
+- `cargo build --lib` — passes (full debug build, ~12s)
+- `cargo test --lib` — **8/8 pass**:
+  - `export::tests::renders_nested_folders`
+  - `history::tests::chrome_time_round_trips_through_unix_epoch`
+  - `history::tests::chrome_epoch_zero_decodes_to_1601`
+  - `history::tests::dedupe_keeps_highest_visit_count`
+  - `history::tests::reads_synthetic_history_db_and_applies_filters` — builds
+    a fake Chrome `History` SQLite file and verifies the reader applies the
+    blocklist, lookback window, visit-count threshold, empty-title filter,
+    and invalid-URL filter
+  - `ai::claude::tests::strips_json_fence`
+  - `ai::claude::tests::strips_plain_fence`
+  - `ai::claude::tests::passes_through_clean_json`
 - `pnpm typecheck` — passes
+- `pnpm build` — passes (production bundle: 151 kB raw / 48 kB gzipped JS)
 - `pnpm install` — completes (lock file is included)
+
+> Limitation: this was tested on Linux (CCR sandbox). The GUI itself was
+> never launched (no display server) and `discover_profiles` was not
+> exercised against a real macOS Chrome install.
 
 ## File map
 
