@@ -6,7 +6,7 @@ build_from:
   armhf: lscr.io/linuxserver/bazarr:1.5.6
 labels:
   org.opencontainers.image.title: "Bazarr"
-  org.opencontainers.image.description: "Bazarr add-on pre Home Assistant"
+  org.opencontainers.image.description: "Bazarr add-on for Home Assistant"
   org.opencontainers.image.source: "https://github.com/halali/ha-apps"
   org.opencontainers.image.licenses: "MIT"
 args:

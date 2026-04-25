@@ -1,0 +1,91 @@
+---
+name: Bug report
+description: Report a problem with one of the add-ons
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: addon
+    attributes:
+      label: Add-on
+      options:
+        - Sonarr
+        - Radarr
+        - Lidarr
+        - Bazarr
+        - Prowlarr
+        - qBittorrent
+        - SABnzbd
+        - Tautulli
+        - Seerr
+        - Other / repository tooling
+    validations:
+      required: true
+
+  - type: input
+    id: addon-version
+    attributes:
+      label: Add-on version
+      description: Visible on the add-on page in Home Assistant.
+      placeholder: "e.g. 4.0.17.2952"
+    validations:
+      required: true
+
+  - type: input
+    id: ha-version
+    attributes:
+      label: Home Assistant version
+      placeholder: "e.g. Core 2026.4.0 / Supervisor 2026.04.1 / OS 13.2"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: arch
+    attributes:
+      label: Architecture
+      options:
+        - amd64
+        - aarch64
+        - armv7
+        - armhf
+        - other / unsure
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: What happened? What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Add-on logs
+      description: Paste relevant log lines. Redact API keys, tokens and personal data.
+      render: shell
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues and didn't find a duplicate.
+          required: true
+        - label: I'm running the latest add-on version available in this repository.
+          required: true

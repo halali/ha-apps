@@ -2,8 +2,11 @@
 name: Prowlarr
 version: "2.3.5.5327"
 slug: prowlarr
-description: Indexer manager and proxy for Sonarr, Radarr, and other *arr apps. Manages all torrent and Usenet indexers in one place and syncs them automatically.
+description: >-
+  Indexer manager and proxy for Sonarr, Radarr, and other *arr apps.
+  Manages all torrent and Usenet indexers in one place and syncs them automatically.
 url: https://github.com/halali/ha-apps/tree/main/prowlarr
+codenotary: notary@home-assistant.io
 arch:
   - amd64
 init: false
@@ -21,7 +24,7 @@ panel_admin: true
 ports:
   "9696/tcp": 9696
 ports_description:
-  "9696/tcp": Web UI / API (pre Sonarr, Radarr a iné *arr apps)
+  "9696/tcp": Web UI / API (for Sonarr, Radarr and other *arr apps)
 map:
   - addon_config:rw
   - share:rw

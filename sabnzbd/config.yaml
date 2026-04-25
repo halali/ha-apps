@@ -1,0 +1,40 @@
+---
+name: SABnzbd
+version: "4.5.5"
+slug: sabnzbd
+description: >-
+  Open-source Usenet binary newsreader and download automation.
+  Companion download client for Sonarr, Radarr, Lidarr and Prowlarr.
+url: https://github.com/halali/ha-apps/tree/main/sabnzbd
+codenotary: notary@home-assistant.io
+arch:
+  - amd64
+init: false
+startup: application
+boot: auto
+host_network: false
+hassio_api: true
+hassio_role: default
+ingress: true
+ingress_port: 8085
+ingress_stream: true
+panel_icon: mdi:cloud-download
+panel_title: SABnzbd
+panel_admin: true
+ports:
+  "8085/tcp": 8085
+ports_description:
+  "8085/tcp": Web UI / API
+map:
+  - addon_config:rw
+  - media:rw
+  - share:rw
+options:
+  PUID: 0
+  PGID: 0
+  TZ: Europe/Bratislava
+schema:
+  PUID: int
+  PGID: int
+  TZ: str
+image: ghcr.io/halali/ha-apps-{arch}-sabnzbd

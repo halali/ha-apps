@@ -3,6 +3,6 @@ build_from:
   amd64: lscr.io/linuxserver/prowlarr:2.3.5.5327-ls143
 labels:
   org.opencontainers.image.title: "Prowlarr"
-  org.opencontainers.image.description: "Prowlarr add-on pre Home Assistant"
+  org.opencontainers.image.description: "Prowlarr add-on for Home Assistant"
   org.opencontainers.image.source: "https://github.com/halali/ha-apps"
   org.opencontainers.image.licenses: "MIT"

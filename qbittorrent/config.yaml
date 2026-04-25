@@ -1,0 +1,46 @@
+---
+name: qBittorrent
+version: "5.1.4"
+slug: qbittorrent
+description: >-
+  Free, open-source BitTorrent client with a web UI.
+  Companion download client for Sonarr, Radarr, Lidarr and Prowlarr.
+url: https://github.com/halali/ha-apps/tree/main/qbittorrent
+codenotary: notary@home-assistant.io
+arch:
+  - amd64
+init: false
+startup: application
+boot: auto
+host_network: false
+hassio_api: true
+hassio_role: default
+ingress: true
+ingress_port: 8080
+ingress_stream: true
+panel_icon: mdi:download-network
+panel_title: qBittorrent
+panel_admin: true
+ports:
+  "8080/tcp": 8080
+  "6881/tcp": 6881
+  "6881/udp": 6881
+ports_description:
+  "8080/tcp": Web UI / API
+  "6881/tcp": BitTorrent peer port (TCP)
+  "6881/udp": BitTorrent peer port (UDP)
+map:
+  - addon_config:rw
+  - media:rw
+  - share:rw
+options:
+  PUID: 0
+  PGID: 0
+  TZ: Europe/Bratislava
+  trust_subnets: true
+schema:
+  PUID: int
+  PGID: int
+  TZ: str
+  trust_subnets: bool
+image: ghcr.io/halali/ha-apps-{arch}-qbittorrent

@@ -1,0 +1,12 @@
+---
+blank_issues_enabled: false
+contact_links:
+  - name: Home Assistant Community
+    url: https://community.home-assistant.io/
+    about: General Home Assistant questions unrelated to these add-ons.
+  - name: LinuxServer.io support
+    url: https://docs.linuxserver.io/
+    about: Issues with the underlying Sonarr/Radarr/Bazarr/Prowlarr containers.
+  - name: Seerr upstream
+    url: https://github.com/seerr-team/seerr/issues
+    about: Bugs in the Seerr application itself.
