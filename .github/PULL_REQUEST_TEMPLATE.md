@@ -8,8 +8,12 @@
 
 - [ ] Sonarr
 - [ ] Radarr
+- [ ] Lidarr
 - [ ] Bazarr
 - [ ] Prowlarr
+- [ ] qBittorrent
+- [ ] SABnzbd
+- [ ] Tautulli
 - [ ] Seerr
 - [ ] Repository tooling (CI, scripts, docs)
 

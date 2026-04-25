@@ -1,0 +1,37 @@
+---
+name: Tautulli
+version: "2.15.2"
+slug: tautulli
+description: Monitoring, analytics, and notifications for Plex Media Server.
+url: https://github.com/halali/ha-apps/tree/main/tautulli
+codenotary: notary@home-assistant.io
+arch:
+  - amd64
+init: false
+startup: application
+boot: auto
+host_network: false
+hassio_api: true
+hassio_role: default
+ingress: true
+ingress_port: 8181
+ingress_stream: true
+panel_icon: mdi:chart-line
+panel_title: Tautulli
+panel_admin: true
+ports:
+  "8181/tcp": 8181
+ports_description:
+  "8181/tcp": Web UI / API
+map:
+  - addon_config:rw
+  - share:rw
+options:
+  PUID: 0
+  PGID: 0
+  TZ: Europe/Bratislava
+schema:
+  PUID: int
+  PGID: int
+  TZ: str
+image: ghcr.io/halali/ha-apps-{arch}-tautulli

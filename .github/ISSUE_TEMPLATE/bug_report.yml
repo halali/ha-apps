@@ -11,8 +11,12 @@ body:
       options:
         - Sonarr
         - Radarr
+        - Lidarr
         - Bazarr
         - Prowlarr
+        - qBittorrent
+        - SABnzbd
+        - Tautulli
         - Seerr
         - Other / repository tooling
     validations:

@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        addon: [sonarr, radarr, bazarr, seerr, prowlarr]
+        addon: [sonarr, radarr, lidarr, bazarr, seerr, prowlarr, qbittorrent, sabnzbd, tautulli]
     steps:
       - uses: actions/checkout@v6
       - uses: hadolint/hadolint-action@v3.3.0

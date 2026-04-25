@@ -41,7 +41,8 @@ def get_with_retry(url: str, max_retries: int = 3, timeout: int = 30) -> request
     return resp
 
 ROOT = Path(__file__).resolve().parents[2]
-LSIO_ADDONS = ["sonarr", "radarr", "bazarr", "prowlarr"]
+LSIO_ADDONS = ["sonarr", "radarr", "lidarr", "bazarr", "prowlarr",
+               "qbittorrent", "sabnzbd", "tautulli"]
 GITHUB_ADDONS = {
     "seerr": "seerr-team/seerr",
 }

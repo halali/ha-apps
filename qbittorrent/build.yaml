@@ -1,0 +1,17 @@
+---
+build_from:
+  amd64: lscr.io/linuxserver/qbittorrent:5.1.4
+  aarch64: lscr.io/linuxserver/qbittorrent:5.1.4
+  armv7: lscr.io/linuxserver/qbittorrent:5.1.4
+  armhf: lscr.io/linuxserver/qbittorrent:5.1.4
+labels:
+  org.opencontainers.image.title: "qBittorrent"
+  org.opencontainers.image.description: "qBittorrent add-on for Home Assistant"
+  org.opencontainers.image.source: "https://github.com/halali/ha-apps"
+  org.opencontainers.image.licenses: "MIT"
+args:
+  BUILD_ARCH:
+    - amd64
+    - aarch64
+    - armv7
+    - armhf

@@ -1,0 +1,17 @@
+---
+build_from:
+  amd64: lscr.io/linuxserver/tautulli:2.15.2
+  aarch64: lscr.io/linuxserver/tautulli:2.15.2
+  armv7: lscr.io/linuxserver/tautulli:2.15.2
+  armhf: lscr.io/linuxserver/tautulli:2.15.2
+labels:
+  org.opencontainers.image.title: "Tautulli"
+  org.opencontainers.image.description: "Tautulli add-on for Home Assistant"
+  org.opencontainers.image.source: "https://github.com/halali/ha-apps"
+  org.opencontainers.image.licenses: "MIT"
+args:
+  BUILD_ARCH:
+    - amd64
+    - aarch64
+    - armv7
+    - armhf
