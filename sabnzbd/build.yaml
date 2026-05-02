@@ -1,9 +1,9 @@
 ---
 build_from:
-  amd64: lscr.io/linuxserver/sabnzbd:4.5.5
-  aarch64: lscr.io/linuxserver/sabnzbd:4.5.5
-  armv7: lscr.io/linuxserver/sabnzbd:4.5.5
-  armhf: lscr.io/linuxserver/sabnzbd:4.5.5
+  amd64: lscr.io/linuxserver/sabnzbd:5.0.1
+  aarch64: lscr.io/linuxserver/sabnzbd:5.0.1
+  armv7: lscr.io/linuxserver/sabnzbd:5.0.1
+  armhf: lscr.io/linuxserver/sabnzbd:5.0.1
 labels:
   org.opencontainers.image.title: "SABnzbd"
   org.opencontainers.image.description: "SABnzbd add-on for Home Assistant"
