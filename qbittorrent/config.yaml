@@ -1,6 +1,6 @@
 ---
 name: qBittorrent
-version: "5.1.4"
+version: "5.2.0"
 slug: qbittorrent
 description: >-
   Free, open-source BitTorrent client with a web UI.

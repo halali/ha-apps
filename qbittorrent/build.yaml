@@ -1,9 +1,9 @@
 ---
 build_from:
-  amd64: lscr.io/linuxserver/qbittorrent:5.1.4
-  aarch64: lscr.io/linuxserver/qbittorrent:5.1.4
-  armv7: lscr.io/linuxserver/qbittorrent:5.1.4
-  armhf: lscr.io/linuxserver/qbittorrent:5.1.4
+  amd64: lscr.io/linuxserver/qbittorrent:5.2.0
+  aarch64: lscr.io/linuxserver/qbittorrent:5.2.0
+  armv7: lscr.io/linuxserver/qbittorrent:5.2.0
+  armhf: lscr.io/linuxserver/qbittorrent:5.2.0
 labels:
   org.opencontainers.image.title: "qBittorrent"
   org.opencontainers.image.description: "qBittorrent add-on for Home Assistant"
