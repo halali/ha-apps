@@ -1,9 +1,9 @@
 ---
 build_from:
-  amd64: lscr.io/linuxserver/sonarr:4.0.17.2952-ls310
-  aarch64: lscr.io/linuxserver/sonarr:4.0.17.2952-ls310
-  armv7: lscr.io/linuxserver/sonarr:4.0.17.2952-ls310
-  armhf: lscr.io/linuxserver/sonarr:4.0.17.2952-ls310
+  amd64: lscr.io/linuxserver/sonarr:4.0.17.2952-ls311
+  aarch64: lscr.io/linuxserver/sonarr:4.0.17.2952-ls311
+  armv7: lscr.io/linuxserver/sonarr:4.0.17.2952-ls311
+  armhf: lscr.io/linuxserver/sonarr:4.0.17.2952-ls311
 labels:
   org.opencontainers.image.title: "Sonarr"
   org.opencontainers.image.description: "Sonarr add-on for Home Assistant"
