@@ -1,6 +1,6 @@
 ---
 name: SABnzbd
-version: "5.0.1"
+version: "5.0.2"
 slug: sabnzbd
 description: >-
   Open-source Usenet binary newsreader and download automation.
