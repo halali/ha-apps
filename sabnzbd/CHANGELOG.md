@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.3
+
+- Bumped LinuxServer.io `sabnzbd` to `5.0.3` (auto-update).
+
 ## 5.0.2
 
 - Bumped LinuxServer.io `sabnzbd` to `5.0.2` (auto-update).
