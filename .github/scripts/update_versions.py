@@ -188,6 +188,34 @@ def fetch_latest_github_release(repo: str) -> Optional[str]:
         return None
 
 
+def ghcr_tag_exists(image: str, tag: str) -> bool:
+    """Return True only when the GHCR tag is confirmed to exist."""
+    url = f"https://ghcr.io/v2/{image}/manifests/{tag}"
+    headers = {"Accept": "application/vnd.oci.image.manifest.v1+json"}
+
+    for attempt in range(3):
+        try:
+            resp = requests.get(url, timeout=30, headers=headers)
+        except requests.RequestException as exc:
+            print(f"[warn] could not verify image {image}:{tag}: {exc}")
+            return False
+
+        if resp.status_code == 200:
+            return True
+        if resp.status_code == 404:
+            return False
+        if resp.status_code == 429 or resp.status_code >= 500:
+            wait = 2 ** attempt * 5
+            print(f"[warn] HTTP {resp.status_code} while checking {image}:{tag} — retrying in {wait}s")
+            time.sleep(wait)
+            continue
+
+        print(f"[warn] unexpected HTTP {resp.status_code} while checking {image}:{tag}")
+        return False
+
+    return False
+
+
 def update_github_build_yaml(path: Path, repo: str, new_version: str) -> bool:
     """Update the ghcr.io image tag in build.yaml for a GitHub-sourced addon."""
     owner = repo.split("/")[1]
@@ -270,6 +298,12 @@ def main() -> int:
 
         if not upstream_newer:
             print(f"[ok] {addon}: upstream still at {latest} (addon is {current_full})")
+            continue
+
+        image_tag = f"v{latest}"
+        image_ready = ghcr_tag_exists(repo, image_tag)
+        if not image_ready:
+            print(f"[skip] {addon}: image ghcr.io/{repo}:{image_tag} is not available yet")
             continue
 
         # Upstream has a new release — reset addon patch, set to bare upstream version
