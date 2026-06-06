@@ -28,3 +28,9 @@ class TestGhcrTagExists(TestCase):
         mock_get.side_effect = [Mock(status_code=500), Mock(status_code=200)]
         self.assertTrue(update_versions.ghcr_tag_exists("seerr-team/seerr", "v3.3.0"))
 
+    @patch.object(update_versions.time, "sleep")
+    @patch.object(update_versions.requests, "get")
+    def test_returns_false_after_exhausting_retries(self, mock_get, _mock_sleep):
+        mock_get.side_effect = [Mock(status_code=500) for _ in range(update_versions.MAX_RETRIES)]
+        self.assertFalse(update_versions.ghcr_tag_exists("seerr-team/seerr", "v3.3.0"))
+        self.assertEqual(mock_get.call_count, update_versions.MAX_RETRIES)

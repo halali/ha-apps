@@ -193,7 +193,12 @@ def fetch_latest_github_release(repo: str) -> Optional[str]:
 def ghcr_tag_exists(image: str, tag: str) -> bool:
     """Return True only when the GHCR tag is confirmed to exist."""
     url = f"https://ghcr.io/v2/{image}/manifests/{tag}"
-    headers = {"Accept": "application/vnd.oci.image.manifest.v1+json"}
+    headers = {
+        "Accept": ",".join([
+            "application/vnd.oci.image.manifest.v1+json",
+            "application/vnd.docker.distribution.manifest.v2+json",
+        ])
+    }
 
     for attempt in range(MAX_RETRIES):
         try:
@@ -206,7 +211,15 @@ def ghcr_tag_exists(image: str, tag: str) -> bool:
             return True
         if resp.status_code == 404:
             return False
-        if resp.status_code == 429 or resp.status_code >= 500:
+        if resp.status_code == 429:
+            retry_after = resp.headers.get("Retry-After", "").strip()
+            wait = 2 ** attempt * RETRY_BACKOFF_BASE_SECONDS
+            if retry_after.isdigit():
+                wait = max(wait, int(retry_after))
+            print(f"[warn] HTTP 429 while checking {image}:{tag} — retrying in {wait}s")
+            time.sleep(wait)
+            continue
+        if resp.status_code >= 500:
             wait = 2 ** attempt * RETRY_BACKOFF_BASE_SECONDS
             print(f"[warn] HTTP {resp.status_code} while checking {image}:{tag} — retrying in {wait}s")
             time.sleep(wait)
