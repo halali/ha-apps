@@ -171,7 +171,7 @@ def fetch_latest_github_release(repo: str) -> Optional[str]:
     headers = {"Accept": "application/vnd.github+json"}
     token = os.getenv("GITHUB_TOKEN")
     if token:
-        headers["Authorization"] = "token " + token
+        headers["Authorization"] = "Bearer " + token
 
     try:
         resp = get_with_retry(url, headers=headers)
