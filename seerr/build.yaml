@@ -6,3 +6,4 @@ labels:
   org.opencontainers.image.description: "Seerr add-on for Home Assistant"
   org.opencontainers.image.source: "https://github.com/halali/ha-apps"
   org.opencontainers.image.licenses: "MIT"
+image: ghcr.io/halali/ha-apps-amd64-seerr
