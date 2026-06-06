@@ -26,10 +26,15 @@ import yaml
 from packaging.version import InvalidVersion, Version
 
 
-def get_with_retry(url: str, max_retries: int = 3, timeout: int = 30) -> requests.Response:
+def get_with_retry(
+    url: str,
+    max_retries: int = 3,
+    timeout: int = 30,
+    headers: Optional[dict[str, str]] = None,
+) -> requests.Response:
     """GET with exponential backoff on 429 / 5xx."""
     for attempt in range(max_retries):
-        resp = requests.get(url, timeout=timeout)
+        resp = requests.get(url, timeout=timeout, headers=headers)
         if resp.status_code == 429 or resp.status_code >= 500:
             wait = 2 ** attempt * 5  # 5s, 10s, 20s
             print(f"[warn] HTTP {resp.status_code} from {url} — retrying in {wait}s")
@@ -163,8 +168,17 @@ def prepend_changelog(path: Path, version: str, source: str) -> None:
 def fetch_latest_github_release(repo: str) -> Optional[str]:
     """Return the latest semver tag from a GitHub repo (strips leading 'v')."""
     url = f"https://api.github.com/repos/{repo}/releases/latest"
-    resp = requests.get(url, timeout=30)
-    resp.raise_for_status()
+    headers = {"Accept": "application/vnd.github+json"}
+    token = os.getenv("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = "Bearer " + token
+
+    try:
+        resp = get_with_retry(url, headers=headers)
+    except requests.RequestException as exc:
+        print(f"[warn] could not fetch latest release from {repo}: {exc}")
+        return None
+
     tag = resp.json().get("tag_name", "")
     ver_str = tag.lstrip("v")
     try:
