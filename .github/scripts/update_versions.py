@@ -55,6 +55,8 @@ DOCKERHUB_URL = (
     "https://hub.docker.com/v2/repositories/linuxserver/{image}/tags"
     "?page_size=100&ordering=last_updated"
 )
+MAX_RETRIES = 3
+RETRY_BACKOFF_BASE_SECONDS = 5
 
 # Ignore tags like "latest", "develop", "nightly", and dated/develop tags.
 SKIP_TAGS = {"latest", "develop", "nightly", "arm32v7-latest", "arm64v8-latest",
@@ -193,7 +195,7 @@ def ghcr_tag_exists(image: str, tag: str) -> bool:
     url = f"https://ghcr.io/v2/{image}/manifests/{tag}"
     headers = {"Accept": "application/vnd.oci.image.manifest.v1+json"}
 
-    for attempt in range(3):
+    for attempt in range(MAX_RETRIES):
         try:
             resp = requests.get(url, timeout=30, headers=headers)
         except requests.RequestException as exc:
@@ -205,7 +207,7 @@ def ghcr_tag_exists(image: str, tag: str) -> bool:
         if resp.status_code == 404:
             return False
         if resp.status_code == 429 or resp.status_code >= 500:
-            wait = 2 ** attempt * 5
+            wait = 2 ** attempt * RETRY_BACKOFF_BASE_SECONDS
             print(f"[warn] HTTP {resp.status_code} while checking {image}:{tag} — retrying in {wait}s")
             time.sleep(wait)
             continue
