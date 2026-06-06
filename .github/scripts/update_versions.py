@@ -191,7 +191,11 @@ def fetch_latest_github_release(repo: str) -> Optional[str]:
 
 
 def ghcr_tag_exists(image: str, tag: str) -> bool:
-    """Return True only when the GHCR tag is confirmed to exist."""
+    """Return True only when the GHCR tag is confirmed to exist.
+
+    `image` is expected in `owner/repo` format, e.g. `seerr-team/seerr`.
+    `tag` is the OCI/Docker tag (for Seerr updates we expect `v<semver>`).
+    """
     url = f"https://ghcr.io/v2/{image}/manifests/{tag}"
     headers = {
         "Accept": ",".join([
