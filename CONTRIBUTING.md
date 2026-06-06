@@ -69,6 +69,7 @@ docker build \
 - Add-ons that wrap LinuxServer.io images use the upstream version directly.
 - Custom add-ons (e.g. Seerr) follow `<upstream>.<addon-patch>` — the 4th component is bumped when this repo ships a fix without an upstream change.
 - A scheduled GitHub Action bumps versions daily — see `.github/scripts/update_versions.py`.
+- GitHub-release-based add-ons are only bumped after the corresponding upstream GHCR tag is verifiably available.
 
 ## Code of Conduct
 
