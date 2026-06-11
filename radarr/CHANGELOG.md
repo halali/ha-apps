@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.2.1.10461
+
+- Bumped LinuxServer.io `radarr` to `6.2.1.10461` (auto-update).
+
 ## 6.1.1.10360
 
 - Bumped LinuxServer.io `radarr` to `6.1.1.10360` (auto-update).

@@ -1,6 +1,6 @@
 ---
 name: Prowlarr
-version: "2.3.5.5327"
+version: "2.4.0.5397"
 slug: prowlarr
 description: >-
   Indexer manager and proxy for Sonarr, Radarr, and other *arr apps.

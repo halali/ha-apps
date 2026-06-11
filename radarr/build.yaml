@@ -1,9 +1,9 @@
 ---
 build_from:
-  amd64: lscr.io/linuxserver/radarr:6.1.1.10360-ls304
-  aarch64: lscr.io/linuxserver/radarr:6.1.1.10360-ls304
-  armv7: lscr.io/linuxserver/radarr:6.1.1.10360-ls304
-  armhf: lscr.io/linuxserver/radarr:6.1.1.10360-ls304
+  amd64: lscr.io/linuxserver/radarr:6.2.1.10461-ls305
+  aarch64: lscr.io/linuxserver/radarr:6.2.1.10461-ls305
+  armv7: lscr.io/linuxserver/radarr:6.2.1.10461-ls305
+  armhf: lscr.io/linuxserver/radarr:6.2.1.10461-ls305
 labels:
   org.opencontainers.image.title: "Radarr"
   org.opencontainers.image.description: "Radarr add-on for Home Assistant"
