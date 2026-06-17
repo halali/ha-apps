@@ -1,6 +1,6 @@
 ---
 name: Tautulli
-version: "2.17.1"
+version: "2.17.2"
 slug: tautulli
 description: Monitoring, analytics, and notifications for Plex Media Server.
 url: https://github.com/halali/ha-apps/tree/main/tautulli
