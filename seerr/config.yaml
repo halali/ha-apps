@@ -1,6 +1,6 @@
 ---
 name: Seerr
-version: "3.3.0"
+version: "3.3.0.1"
 slug: seerr
 description: >-
   Open-source media request and discovery manager for Jellyfin, Plex, and Emby.
