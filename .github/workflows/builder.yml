@@ -114,7 +114,7 @@ jobs:
           echo "date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
 
       - name: Build image
-        uses: home-assistant/builder/actions/build-image@2026.03.2
+        uses: home-assistant/builder/actions/build-image@2026.06.0
         with:
           arch: amd64
           image: ghcr.io/${{ github.repository_owner }}/ha-apps-amd64-${{ matrix.addon }}
