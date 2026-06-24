@@ -1,9 +1,9 @@
 ---
 build_from:
-  amd64: lscr.io/linuxserver/lidarr:3.1.0.4875-ls31
-  aarch64: lscr.io/linuxserver/lidarr:3.1.0.4875-ls31
-  armv7: lscr.io/linuxserver/lidarr:3.1.0.4875-ls31
-  armhf: lscr.io/linuxserver/lidarr:3.1.0.4875-ls31
+  amd64: lscr.io/linuxserver/lidarr:3.1.0.4875-ls32
+  aarch64: lscr.io/linuxserver/lidarr:3.1.0.4875-ls32
+  armv7: lscr.io/linuxserver/lidarr:3.1.0.4875-ls32
+  armhf: lscr.io/linuxserver/lidarr:3.1.0.4875-ls32
 labels:
   org.opencontainers.image.title: "Lidarr"
   org.opencontainers.image.description: "Lidarr add-on for Home Assistant"
