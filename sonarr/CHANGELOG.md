@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.18.2971
+
+- Bumped LinuxServer.io `sonarr` to `4.0.18.2971` (auto-update).
+
 ## 4.0.17.2952
 
 - Bumped LinuxServer.io `sonarr` to `4.0.17.2952` (auto-update).
