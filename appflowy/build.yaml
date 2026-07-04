@@ -1,6 +1,8 @@
 ---
 build_from:
-  amd64: pgvector/pgvector:pg16
+  # Debian trixie base — the AppFlowy binaries require glibc >= 2.39, which
+  # bookworm (2.36) does not provide. trixie ships glibc 2.41.
+  amd64: pgvector/pgvector:pg16-trixie
 labels:
   org.opencontainers.image.title: "AppFlowy"
   org.opencontainers.image.description: "Self-hosted AppFlowy Cloud add-on for Home Assistant"

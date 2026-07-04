@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.16.5.1
+
+- Fixed a runtime crash (`GLIBC_2.39 not found`) — the AppFlowy binaries are
+  built against glibc 2.39, so the base image was moved from Debian bookworm
+  (glibc 2.36) to `pgvector/pgvector:pg16-trixie` (glibc 2.41).
+
 ## 0.16.5
 
 - Initial release — self-hosted **AppFlowy Cloud** `0.16.5` as an all-in-one add-on.
