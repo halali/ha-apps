@@ -69,7 +69,15 @@ SMTP_FROM: appflowy@example.com
 1. Install the [AppFlowy app](https://appflowy.com/download) (desktop or mobile).
 2. Go to **Settings → Cloud Settings → Self-hosted Cloud**.
 3. Enter your `APPFLOWY_BASE_URL` (e.g. `http://192.168.1.10:9080`).
-4. Sign up / sign in.
+4. **Sign up a normal account** (see below), then sign in.
+
+> ⚠️ **Don't log in with the admin e-mail.** The account created from
+> `GOTRUE_ADMIN_EMAIL` is a *system admin*, and AppFlowy deliberately blocks
+> system admins from signing in through the desktop/mobile/web apps
+> (`System admin accounts must use the admin console and cannot sign in via
+> client apps`). Register a separate, non-admin account for everyday use — sign-up
+> is open and e-mail is auto-confirmed, so no SMTP is required. The admin account
+> is only useful once the admin console is added.
 
 ### Or use the browser
 

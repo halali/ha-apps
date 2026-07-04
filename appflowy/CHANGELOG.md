@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.16.5.3
+
+- Clarified sign-in: the `GOTRUE_ADMIN_EMAIL` account is a *system admin* and
+  AppFlowy blocks it from the desktop/mobile/web apps (`System admin accounts
+  must use the admin console…`). The landing page and README now tell users to
+  register a normal, non-admin account for everyday use. No functional change.
+
 ## 0.16.5.2
 
 - Added the **AppFlowy web front-end** (`appflowy_web` `0.15.5`). The gateway now
