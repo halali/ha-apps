@@ -1,16 +1,14 @@
 ARG BUILD_FROM
 
 # ── AppFlowy Cloud stack version ─────────────────────────────────────────────
-# appflowy_cloud, appflowy_worker, admin_frontend and gotrue are released
-# together under the same version tag. Keep this in sync with config.yaml.
+# appflowy_cloud, appflowy_worker and gotrue are released together under the
+# same version tag. Keep this in sync with config.yaml.
 ARG APPFLOWY_VERSION=0.16.5
 
 # hadolint ignore=DL3006
 FROM appflowyinc/appflowy_cloud:${APPFLOWY_VERSION}-amd64 AS cloud
 # hadolint ignore=DL3006
 FROM appflowyinc/appflowy_worker:${APPFLOWY_VERSION}-amd64 AS worker
-# hadolint ignore=DL3006
-FROM appflowyinc/admin_frontend:${APPFLOWY_VERSION}-amd64 AS admin
 # hadolint ignore=DL3006
 FROM appflowyinc/gotrue:${APPFLOWY_VERSION}-amd64 AS gotrue
 
@@ -50,8 +48,6 @@ RUN apt-get update \
 # ── AppFlowy service binaries (copied from the official images) ──────────────
 COPY --from=cloud  /usr/local/bin/appflowy_cloud  /usr/local/bin/appflowy_cloud
 COPY --from=worker /usr/local/bin/appflowy_worker /usr/local/bin/appflowy_worker
-COPY --from=admin  /usr/local/bin/admin_frontend  /usr/local/bin/admin_frontend
-COPY --from=admin  /app/assets                    /app/assets
 # GoTrue ships as /auth + /start.sh + /migrations and runs from its own workdir
 COPY --from=gotrue /auth        /opt/gotrue/auth
 COPY --from=gotrue /start.sh    /opt/gotrue/start.sh
