@@ -1,0 +1,9 @@
+---
+build_from:
+  amd64: pgvector/pgvector:pg16
+labels:
+  org.opencontainers.image.title: "AppFlowy"
+  org.opencontainers.image.description: "Self-hosted AppFlowy Cloud add-on for Home Assistant"
+  org.opencontainers.image.source: "https://github.com/halali/ha-apps"
+  org.opencontainers.image.licenses: "MIT"
+image: ghcr.io/halali/ha-apps-amd64-appflowy

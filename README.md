@@ -22,6 +22,7 @@ A collection of Home Assistant add-ons for popular *arr applications built on [L
 | [SABnzbd](./sabnzbd) | `8085` | Open-source Usenet binary newsreader | [linuxserver/sabnzbd](https://hub.docker.com/r/linuxserver/sabnzbd) |
 | [Tautulli](./tautulli) | `8181` | Monitoring, analytics and notifications for Plex Media Server | [linuxserver/tautulli](https://hub.docker.com/r/linuxserver/tautulli) |
 | [Seerr](./seerr) | `5055` | Media request manager for Plex, Jellyfin and Emby — successor to Overseerr | [seerr-team/seerr](https://github.com/seerr-team/seerr) |
+| [AppFlowy](./appflowy) | `9080` | Self-hosted AppFlowy Cloud — open-source Notion alternative (all-in-one) | [AppFlowy-IO/AppFlowy-Cloud](https://github.com/AppFlowy-IO/AppFlowy-Cloud) |
 
 > Looking for a different app? Check [WISHLIST.md](./WISHLIST.md) for candidates and rationale, or open a [feature request](.github/ISSUE_TEMPLATE/feature_request.yml).
 

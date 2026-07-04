@@ -1,0 +1,51 @@
+---
+name: AppFlowy
+version: "0.16.5"
+slug: appflowy
+description: >-
+  Self-hosted AppFlowy Cloud — an open-source Notion alternative. All-in-one
+  bundle: PostgreSQL, Redis, MinIO, GoTrue auth, the AppFlowy Cloud API,
+  background worker and nginx gateway in a single add-on.
+url: https://github.com/halali/ha-apps/tree/main/appflowy
+codenotary: notary@home-assistant.io
+arch:
+  - amd64
+init: false
+startup: application
+boot: manual
+host_network: false
+hassio_api: true
+hassio_role: default
+ingress: true
+ingress_port: 8099
+panel_icon: mdi:notebook-edit
+panel_title: AppFlowy
+panel_admin: true
+ports:
+  "9080/tcp": 9080
+ports_description:
+  "9080/tcp": AppFlowy gateway — web console, API, WebSocket (desktop & mobile clients)
+map:
+  - addon_config:rw
+options:
+  APPFLOWY_BASE_URL: http://homeassistant.local:9080
+  GOTRUE_ADMIN_EMAIL: admin@example.com
+  GOTRUE_ADMIN_PASSWORD: ""
+  GOTRUE_DISABLE_SIGNUP: false
+  GOTRUE_MAILER_AUTOCONFIRM: true
+  RUST_LOG: info
+  TZ: Europe/Bratislava
+schema:
+  APPFLOWY_BASE_URL: url
+  GOTRUE_ADMIN_EMAIL: email
+  GOTRUE_ADMIN_PASSWORD: password?
+  GOTRUE_DISABLE_SIGNUP: bool
+  GOTRUE_MAILER_AUTOCONFIRM: bool
+  SMTP_HOST: str?
+  SMTP_PORT: int?
+  SMTP_USER: str?
+  SMTP_PASSWORD: password?
+  SMTP_FROM: email?
+  RUST_LOG: list(error|warn|info|debug|trace)
+  TZ: str
+image: ghcr.io/halali/ha-apps-{arch}-appflowy
