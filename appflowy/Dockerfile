@@ -4,6 +4,8 @@ ARG BUILD_FROM
 # appflowy_cloud, appflowy_worker and gotrue are released together under the
 # same version tag. Keep this in sync with config.yaml.
 ARG APPFLOWY_VERSION=0.16.5
+# The web front-end is versioned independently of the core stack.
+ARG APPFLOWY_WEB_VERSION=0.15.5
 
 # hadolint ignore=DL3006
 FROM appflowyinc/appflowy_cloud:${APPFLOWY_VERSION}-amd64 AS cloud
@@ -11,8 +13,10 @@ FROM appflowyinc/appflowy_cloud:${APPFLOWY_VERSION}-amd64 AS cloud
 FROM appflowyinc/appflowy_worker:${APPFLOWY_VERSION}-amd64 AS worker
 # hadolint ignore=DL3006
 FROM appflowyinc/gotrue:${APPFLOWY_VERSION}-amd64 AS gotrue
+# hadolint ignore=DL3006
+FROM appflowyinc/appflowy_web:${APPFLOWY_WEB_VERSION}-amd64 AS web
 
-# ── Final image: PostgreSQL 16 + pgvector (Debian bookworm) ──────────────────
+# ── Final image: PostgreSQL 16 + pgvector (Debian trixie) ────────────────────
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
@@ -52,6 +56,9 @@ COPY --from=worker /usr/local/bin/appflowy_worker /usr/local/bin/appflowy_worker
 COPY --from=gotrue /auth        /opt/gotrue/auth
 COPY --from=gotrue /start.sh    /opt/gotrue/start.sh
 COPY --from=gotrue /migrations  /opt/gotrue/migrations
+# AppFlowy web front-end — the built SPA is served statically by the gateway;
+# runtime config (base/gotrue/ws URLs) is injected into index.html on start.
+COPY --from=web    /usr/share/nginx/html /opt/appflowy-web
 
 # ── Add-on rootfs (entrypoint, service wrappers, supervisor, nginx) ──────────
 COPY rootfs/ /

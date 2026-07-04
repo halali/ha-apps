@@ -18,6 +18,7 @@ every service AppFlowy Cloud needs:
 | GoTrue | Authentication (email + admin user) |
 | AppFlowy Cloud API | Core backend + WebSocket sync |
 | AppFlowy Worker | Background imports & notifications |
+| AppFlowy Web | Browser workspace (static SPA) |
 | nginx | Gateway / reverse proxy |
 
 > ⚠️ **Heavy add-on.** The full stack uses roughly **2–4 GB RAM**. Run it on a
@@ -70,9 +71,12 @@ SMTP_FROM: appflowy@example.com
 3. Enter your `APPFLOWY_BASE_URL` (e.g. `http://192.168.1.10:9080`).
 4. Sign up / sign in.
 
-The HA sidebar button opens a small landing page that shows your server URL and
-a link to download the app. The pre-configured admin account
-(`GOTRUE_ADMIN_EMAIL` / `GOTRUE_ADMIN_PASSWORD`) can sign in from the app too.
+### Or use the browser
+
+The **web workspace** is served directly at `APPFLOWY_BASE_URL` — just open that
+URL (or use the **Open AppFlowy** button on the HA sidebar landing page). The
+pre-configured admin account (`GOTRUE_ADMIN_EMAIL` / `GOTRUE_ADMIN_PASSWORD`) can
+sign in there too.
 
 ## External Port
 
@@ -89,9 +93,9 @@ a link to download the app. The pre-configured admin account
 ## Notes & limitations
 
 - **amd64 only** — the bundled AppFlowy binaries are published for x86-64.
-- The browser-based UI — the **admin console** (`admin_frontend`, a Next.js app)
-  and the standalone **web editor** (`appflowy_web`) — plus the optional **AI**
-  and **search** services are not bundled. Document editing is done through the
-  AppFlowy desktop/mobile apps; AI features stay disabled.
-- HA **Ingress** shows a status/landing page rather than an app, because AppFlowy
-  is served from its own base URL. Use the external port / `APPFLOWY_BASE_URL`.
+- The web front-end is served as a **static SPA** (no Bun SSR), so public
+  share-link previews are client-rendered. The **admin console**
+  (`admin_frontend`) and the **AI** / **search** services are not bundled.
+- HA **Ingress** shows a landing page with a link into the app rather than
+  embedding it, because AppFlowy is served from its own base URL. Open the app at
+  the external port / `APPFLOWY_BASE_URL`.

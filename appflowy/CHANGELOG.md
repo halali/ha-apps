@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.16.5.2
+
+- Added the **AppFlowy web front-end** (`appflowy_web` `0.15.5`). The gateway now
+  serves the browser workspace at the add-on's base URL; runtime backend URLs are
+  injected into the SPA on start. Open it from the HA sidebar or `APPFLOWY_BASE_URL`.
+
 ## 0.16.5.1
 
 - Fixed a runtime crash (`GLIBC_2.39 not found`) — the AppFlowy binaries are

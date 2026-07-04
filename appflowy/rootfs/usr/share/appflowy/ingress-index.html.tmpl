@@ -47,17 +47,18 @@
 <body>
   <main class="card">
     <div class="logo">AF</div>
-    <h1>AppFlowy Cloud is running</h1>
-    <p>Your self-hosted AppFlowy backend is served at:</p>
+    <h1>AppFlowy is running</h1>
+    <p>Open the web workspace, or point a desktop/mobile app at:</p>
     <p><code>__APPFLOWY_BASE_URL__</code></p>
     <div class="actions">
-      <a class="btn btn-primary" href="https://appflowy.com/download" target="_blank" rel="noopener">Get the AppFlowy app</a>
+      <a class="btn btn-primary" href="__APPFLOWY_BASE_URL__" target="_blank" rel="noopener">Open AppFlowy</a>
+      <a class="btn btn-secondary" href="https://appflowy.com/download" target="_blank" rel="noopener">Get the app</a>
     </div>
     <p class="hint">
-      Sign in and edit documents from the AppFlowy desktop &amp; mobile apps by
-      pointing them at the URL above (Settings → Cloud Settings → Self-hosted).
-      This add-on serves the API, authentication, realtime sync and object
-      storage; the browser-based UI is not bundled.
+      The web workspace is served at the URL above. Desktop &amp; mobile apps
+      connect to the same URL (Settings → Cloud Settings → Self-hosted). This
+      add-on bundles the API, authentication, realtime sync, object storage and
+      the web front-end; the admin console and AI features are not included.
     </p>
   </main>
 </body>
