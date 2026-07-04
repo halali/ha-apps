@@ -212,9 +212,13 @@ sed "s|__APPFLOWY_BASE_URL__|${APPFLOWY_BASE_URL}|g; s|__INGRESS_ENTRY__|${INGRE
 # injection is done fresh each boot.
 WEB_INDEX="/opt/appflowy-web/index.html"
 if [[ -f "${WEB_INDEX}" ]] && ! grep -q "__APP_CONFIG__" "${WEB_INDEX}"; then
-    WEB_CFG="<script>window.__APP_CONFIG__={APPFLOWY_BASE_URL:'${APPFLOWY_BASE_URL}',APPFLOWY_GOTRUE_BASE_URL:'${APPFLOWY_BASE_URL}/gotrue',APPFLOWY_WS_BASE_URL:'${WS_BASE_URL}'};</script>"
+    # Derive the backend URLs from the origin the browser actually loaded the
+    # page from, so the web front-end works at whatever host/IP is used to reach
+    # the add-on (LAN IP, hostname, reverse-proxied domain) without depending on
+    # APPFLOWY_BASE_URL matching. All backends are same-origin behind the gateway.
+    WEB_CFG='<script>(function(){var o=location.origin,w=(location.protocol==="https:"?"wss":"ws")+"://"+location.host;window.__APP_CONFIG__={APPFLOWY_BASE_URL:o,APPFLOWY_GOTRUE_BASE_URL:o+"/gotrue",APPFLOWY_WS_BASE_URL:w+"/ws/v2"};})();</script>'
     sed -i "s#</head>#${WEB_CFG}</head>#" "${WEB_INDEX}"
-    log "Injected web front-end config."
+    log "Injected web front-end config (origin-relative)."
 fi
 
 log "Starting services via supervisord…"

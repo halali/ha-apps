@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.16.5.4
+
+- Fixed web sign-in/sign-up failing (`Failed to sign up with password`) when the
+  add-on is opened at a different host than `APPFLOWY_BASE_URL` (e.g. the LAN IP
+  vs `homeassistant.local`). The web front-end now derives its backend URLs from
+  the browser's own origin, so it works at whatever address is used to reach it.
+  (Media/object-storage links still use `APPFLOWY_BASE_URL`, so set it to your
+  access URL for images to load.)
+
 ## 0.16.5.3
 
 - Clarified sign-in: the `GOTRUE_ADMIN_EMAIL` account is a *system admin* and
