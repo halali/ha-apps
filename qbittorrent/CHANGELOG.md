@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.2.3
+
+- Bumped LinuxServer.io `qbittorrent` to `5.2.3` (auto-update).
+
 ## 5.2.2
 
 - Bumped LinuxServer.io `qbittorrent` to `5.2.2` (auto-update).
