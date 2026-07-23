@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.2.5491
+
+- Bumped LinuxServer.io `prowlarr` to `2.5.2.5491` (auto-update).
+
 ## 2.4.0.5397
 
 - Bumped LinuxServer.io `prowlarr` to `2.4.0.5397` (auto-update).
