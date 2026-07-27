@@ -14,6 +14,9 @@ jobs:
   update:
     name: Check upstream LinuxServer.io versions
     runs-on: ubuntu-latest
+    outputs:
+      addons: ${{ steps.commit.outputs.addons }}
+      sha: ${{ steps.commit.outputs.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -30,23 +33,91 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r .github/scripts/requirements.txt
 
+      # continue-on-error so that add-ons which DID resolve still get committed
+      # below; the run is failed afterwards by the "Report" step.
       - name: Run version updater
         id: updater
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python .github/scripts/update_versions.py
 
       - name: Commit changes
+        id: commit
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [[ -n "$(git status --porcelain)" ]]; then
-            SUMMARY="$(cat .github/.update_summary 2>/dev/null || echo 'Automatic version bump')"
-            git add -A
-            printf 'chore: bump add-on versions\n\n%s\n' "$SUMMARY" > .git/COMMIT_MSG
-            git commit -F .git/COMMIT_MSG
-            git push
-          else
+
+          if [[ -z "$(git status --porcelain)" ]]; then
             echo "No changes to commit."
+            echo "addons=[]" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+
+          # Any touched top-level directory holding a config.yaml is an add-on.
+          # Derived rather than hard-coded so a new add-on needs no edit here.
+          BUMPED=$(git status --porcelain | awk '{print $NF}' | awk -F/ '{print $1}' \
+            | sort -u \
+            | while read -r d; do [[ -f "$d/config.yaml" ]] && echo "$d"; done \
+            | jq -R . | jq -cs .)
+
+          SUMMARY="$(cat .github/.update_summary 2>/dev/null || echo 'Automatic version bump')"
+          git add -A
+          printf 'chore: bump add-on versions\n\n%s\n' "$SUMMARY" > .git/COMMIT_MSG
+          git commit -F .git/COMMIT_MSG
+          git push
+
+          echo "addons=$BUMPED" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "Bumped add-ons: $BUMPED"
+
+      # A stale add-on is invisible unless the run goes red — see the updater
+      # step's log for which add-on could not be resolved and why.
+      - name: Report unresolved add-ons
+        if: steps.updater.outcome == 'failure'
+        run: |
+          echo "::error::update_versions.py could not resolve one or more upstream versions — those add-ons are frozen. See the 'Run version updater' step log."
+          exit 1
+
+  # Bumping config.yaml without publishing a matching image makes Home Assistant
+  # offer an update that then fails with "manifest unknown".  The push above
+  # cannot trigger Builder on its own (GITHUB_TOKEN pushes raise no events), so
+  # we call it here.  always() keeps this running when a *different* add-on
+  # failed to resolve upstream — the ones that did resolve still need images.
+  build:
+    name: Build bumped add-ons
+    needs: update
+    if: always() && needs.update.outputs.addons != '' && needs.update.outputs.addons != '[]'
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/builder.yml
+    with:
+      addons: ${{ needs.update.outputs.addons }}
+      ref: ${{ needs.update.outputs.sha }}
+
+  # Standing invariant: what config.yaml advertises must exist on GHCR.  This
+  # is what catches the whole class of "version bumped, image never built"
+  # problems, whatever the cause — a skipped build, a deleted package, a
+  # hand-edited version.
+  verify:
+    name: Verify published images
+    needs: [update, build]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.update.outputs.sha || github.sha }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r .github/scripts/requirements.txt
+      - name: Every add-on version must have a published image
+        run: python .github/scripts/check_images.py
