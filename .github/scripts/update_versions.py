@@ -55,6 +55,10 @@ DOCKERHUB_URL = (
     "https://hub.docker.com/v2/repositories/linuxserver/{image}/tags"
     "?page_size=100&ordering=last_updated"
 )
+# Upper bound on tag pages walked per image (100 tags each).  Images with busy
+# nightly branches (Prowlarr publishes ~20 tags/day) push the newest release
+# off page 1 within days, so a single page is not enough to find it.
+MAX_TAG_PAGES = 10
 
 # Ignore tags like "latest", "develop", "nightly", and dated/develop tags.
 SKIP_TAGS = {"latest", "develop", "nightly", "arm32v7-latest", "arm64v8-latest",
@@ -76,30 +80,49 @@ def get_lsio_image(build_yaml: Path) -> Optional[str]:
 def fetch_latest_version(image: str) -> Optional[tuple[str, str]]:
     """Return (version_for_config, docker_tag_for_build) for the latest release.
 
-    Fetches only the first page (100 tags, ordered by last_updated desc).
-    The newest release is always in the first page — no pagination needed.
+    Walks tag pages (ordered by last_updated desc) until a page yields at least
+    one release tag, or MAX_TAG_PAGES is reached.  Paging is required because
+    nightly and develop builds publish far more tags than releases do, and they
+    push the newest release off the first page within a few days.
+
+    Returns None when no release tag is found at all — the caller must treat
+    that as an error rather than a silent "nothing to do".
 
     Some LSIO images only publish full tags like '2.3.5.5327-ls141' without a
     short '2.3.5.5327' alias.  We use the clean version in config.yaml but must
     use the actual published tag in build.yaml.  Prefer the short tag when it
     exists; fall back to the full '-ls' tag otherwise.
     """
-    url = DOCKERHUB_URL.format(image=image)
+    url: Optional[str] = DOCKERHUB_URL.format(image=image)
     version_tags: dict[str, list[str]] = {}
-    resp = get_with_retry(url)
-    for item in resp.json().get("results", []):
-        name = item.get("name", "")
-        if name in SKIP_TAGS:
-            continue
-        m = TAG_RE.match(name)
-        if not m:
-            continue
-        ver_str = m.group("ver")
-        try:
-            Version(ver_str)
-        except InvalidVersion:
-            continue
-        version_tags.setdefault(ver_str, []).append(name)
+    pages_with_releases = 0
+    for _ in range(MAX_TAG_PAGES):
+        if not url:
+            break
+        payload = get_with_retry(url).json()
+        for item in payload.get("results", []):
+            name = item.get("name", "")
+            if name in SKIP_TAGS:
+                continue
+            m = TAG_RE.match(name)
+            if not m:
+                continue
+            ver_str = m.group("ver")
+            try:
+                Version(ver_str)
+            except InvalidVersion:
+                continue
+            version_tags.setdefault(ver_str, []).append(name)
+        # Tags are newest-first, so the first page carrying releases carries the
+        # current one.  Read one page beyond it though: a single release
+        # publishes several tags ('2.5.2', '2.5.2.5491-ls155', ...) and they can
+        # straddle a page boundary, which would otherwise leave us with the
+        # coarse '2.5.2' alias instead of the exact build version.
+        if version_tags:
+            pages_with_releases += 1
+            if pages_with_releases > 1:
+                break
+        url = payload.get("next")
     if not version_tags:
         return None
     latest_ver = max(version_tags.keys(), key=lambda v: Version(v))
@@ -123,10 +146,29 @@ def update_build_yaml(path: Path, image: str, new_version: str) -> bool:
     return False
 
 
+def read_current_version(path: Path) -> str:
+    """Return the version currently pinned in a config.yaml ('?' when absent)."""
+    match = re.search(r'^version:\s*"?([^"\n]+)"?\s*$', path.read_text(),
+                      flags=re.MULTILINE)
+    return match.group(1) if match else "?"
+
+
+def is_downgrade(new_version: str, current_version: str) -> bool:
+    """True when new_version is older than the version already shipped.
+
+    Guards against LSIO rebuilding an old release branch: such a rebuild lands
+    at the top of the newest-first tag listing and would otherwise roll a
+    working add-on backwards.  Unparseable versions are never a downgrade.
+    """
+    try:
+        return Version(new_version) < Version(current_version)
+    except InvalidVersion:
+        return False
+
+
 def update_config_yaml(path: Path, new_version: str) -> tuple[bool, str]:
     raw = path.read_text()
-    match = re.search(r'^version:\s*"?([^"\n]+)"?\s*$', raw, flags=re.MULTILINE)
-    old_version = match.group(1) if match else "?"
+    old_version = read_current_version(path)
     new_raw = re.sub(
         r'^version:\s*"?[^"\n]+"?\s*$',
         f'version: "{new_version}"',
@@ -233,6 +275,7 @@ def update_github_build_yaml(path: Path, repo: str, new_version: str) -> bool:
 
 def main() -> int:
     summary_lines: list[str] = []
+    failures: list[str] = []
     changed_any = False
 
     for addon in LSIO_ADDONS:
@@ -251,9 +294,19 @@ def main() -> int:
 
         result = fetch_latest_version(image)
         if not result:
-            print(f"[warn] {addon}: no versions found for {image}")
+            print(f"[error] {addon}: no release tag found for {image} within "
+                  f"{MAX_TAG_PAGES} pages — the add-on is now frozen at its "
+                  f"current version and will stay stale until this is fixed")
+            failures.append(f"{addon} (no release tag found for {image})")
             continue
         latest, docker_tag = result
+
+        current = read_current_version(config_yaml)
+        if is_downgrade(latest, current):
+            print(f"[error] {addon}: refusing to downgrade {current} -> {latest} "
+                  f"(upstream likely rebuilt an older release branch)")
+            failures.append(f"{addon} (downgrade {current} -> {latest} refused)")
+            continue
 
         cfg_changed, old_ver = update_config_yaml(config_yaml, latest)
         bld_changed = update_build_yaml(build_yaml, image, docker_tag)
@@ -281,13 +334,13 @@ def main() -> int:
 
         latest = fetch_latest_github_release(repo)
         if not latest:
-            print(f"[warn] {addon}: could not fetch latest release from {repo}")
+            print(f"[error] {addon}: could not resolve latest release from {repo} "
+                  f"— the add-on will stay stale until this is fixed")
+            failures.append(f"{addon} (no release resolved from {repo})")
             continue
 
         # Read current version and strip optional 4th addon-patch component
-        raw_cfg = config_yaml.read_text()
-        m = re.search(r'^version:\s*"?([^"\n]+)"?\s*$', raw_cfg, flags=re.MULTILINE)
-        current_full = m.group(1) if m else "0"
+        current_full = read_current_version(config_yaml)
         parts = current_full.split(".")
         current_upstream = ".".join(parts[:3])  # e.g. "3.1.1" from "3.1.1.1"
 
@@ -318,7 +371,13 @@ def main() -> int:
 
     summary_path = ROOT / ".github" / ".update_summary"
     summary_path.write_text("\n".join(summary_lines) if summary_lines else "")
-    # Always succeed: "no updates today" is not a failure for this workflow.
+
+    # "No updates today" is not a failure — but failing to resolve an upstream
+    # version is.  Exiting non-zero turns a silently stale add-on into a red
+    # workflow run, which is the only way anyone finds out.
+    if failures:
+        print("\n[error] auto-update could not resolve: " + ", ".join(failures))
+        return 1
     return 0
 
 
