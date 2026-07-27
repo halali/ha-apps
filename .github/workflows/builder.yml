@@ -47,7 +47,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          fetch-depth: 2
+          # Full history: a push carrying more than one commit puts the "before"
+          # SHA outside a shallow clone, and the diff below then dies with
+          # "fatal: bad object" — which skips the build for genuinely changed
+          # add-ons and leaves them without an image.
+          fetch-depth: 0
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Compute changed add-ons
