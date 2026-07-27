@@ -46,6 +46,29 @@ shellcheck $(find . -name '*.sh')
 
 CI runs the same checks on every push and PR (`.github/workflows/lint.yml`).
 
+### Python Tests
+
+The release automation in `.github/scripts/` is covered by unit tests:
+
+```sh
+pip install -r .github/scripts/requirements.txt pytest
+python -m pytest .github/scripts -q
+```
+
+### Release Invariant
+
+Home Assistant pulls `<image>:<version>` using the version in `config.yaml`, so
+a version that has no published image makes the add-on fail to install with
+`404 manifest unknown`. `check_images.py` asserts that every add-on's version
+exists on GHCR and runs daily:
+
+```sh
+python .github/scripts/check_images.py
+```
+
+Never bump a version in `config.yaml` without letting the Builder workflow
+publish the matching image.
+
 ### Build Locally
 
 The `home-assistant/builder` action can be invoked manually, or you can build directly:
