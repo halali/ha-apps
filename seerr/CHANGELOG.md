@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.0.4
+
+- Temporary diagnostic build. Adds click / window.open / error tracing to the
+  injected ingress shim so the Plex login failure can be traced from the
+  network log. No behaviour change; to be removed once the cause is known.
+
 ## 3.3.0.3
 
 - Revert the 3.3.0.2 buffering change. It was based on a bad measurement:
