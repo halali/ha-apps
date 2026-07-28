@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.0.6
+
+- Experiment: all injected runtime patches (fetch / XHR / script.src /
+  crypto polyfill) disabled, diagnostics kept, to test whether the shim is
+  what prevents React from hydrating under ingress. Temporary.
+
 ## 3.3.0.5
 
 - Diagnostics now report through `document.title` instead of network pings,
