@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.5.2.5491.2
+
+- Fix HA Ingress blank page, part two: the entry bundle overwrites
+  `window.<App>` with `initialize.json` and takes the webpack public path
+  from there, so rewriting the HTML alone left `urlBase` empty again and
+  the lazy chunks still 404ed. nginx now prefixes `urlBase` and `apiRoot`
+  in that response too.
+
 ## 2.5.2.5491.1
 
 - Fix HA Ingress: the web UI rendered a blank page in the sidebar. The app
