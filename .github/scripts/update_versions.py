@@ -153,6 +153,17 @@ def read_current_version(path: Path) -> str:
     return match.group(1) if match else "?"
 
 
+def is_local_patch_of(current_version: str, upstream_version: str) -> bool:
+    """True when current is the upstream version plus a local add-on patch.
+
+    Add-on fixes (an nginx or init-script change) ship as '<upstream>.<n>' so
+    Home Assistant offers an update without waiting for an upstream release.
+    Such a version is NEWER than upstream, which the downgrade guard would
+    otherwise refuse — turning every daily run red until upstream moves.
+    """
+    return current_version.startswith(f"{upstream_version}.")
+
+
 def is_downgrade(new_version: str, current_version: str) -> bool:
     """True when new_version is older than the version already shipped.
 
@@ -302,6 +313,9 @@ def main() -> int:
         latest, docker_tag = result
 
         current = read_current_version(config_yaml)
+        if is_local_patch_of(current, latest):
+            print(f"[ok] {addon}: upstream still at {latest} (addon is {current})")
+            continue
         if is_downgrade(latest, current):
             print(f"[error] {addon}: refusing to downgrade {current} -> {latest} "
                   f"(upstream likely rebuilt an older release branch)")

@@ -121,6 +121,26 @@ class TestIsDowngrade(TestCase):
         self.assertFalse(update_versions.is_downgrade("2.5.2.5491", "not-a-version"))
 
 
+class TestIsLocalPatchOf(TestCase):
+    """Add-on fixes ship as <upstream>.<n> without waiting for an upstream release."""
+
+    def test_extra_component_is_a_local_patch(self):
+        self.assertTrue(
+            update_versions.is_local_patch_of("2.5.2.5491.1", "2.5.2.5491"))
+
+    def test_identical_version_is_not_a_patch(self):
+        self.assertFalse(
+            update_versions.is_local_patch_of("2.5.2.5491", "2.5.2.5491"))
+
+    def test_newer_upstream_is_not_a_patch(self):
+        self.assertFalse(
+            update_versions.is_local_patch_of("2.6.0.5500", "2.5.2.5491"))
+
+    def test_unrelated_prefix_is_not_a_patch(self):
+        """'1.6.0' must not look like a local patch of '1.6'."""
+        self.assertFalse(update_versions.is_local_patch_of("1.60.1", "1.6"))
+
+
 class MainTestCase(TestCase):
     """Runs main() against a throwaway repo containing a single LSIO add-on."""
 
@@ -166,6 +186,25 @@ class TestMainFailsLoudly(MainTestCase):
         self.assertEqual(update_versions.main(), 0)
         self.assertIn('version: "2.6.0.5500"', self.config_yaml.read_text())
         self.assertIn("prowlarr:2.6.0.5500-ls160", self.build_yaml.read_text())
+
+
+class TestMainKeepsLocalPatch(MainTestCase):
+    def setUp(self):
+        super().setUp()
+        self.config_yaml.write_text('---\nname: Prowlarr\nversion: "2.5.2.5491.1"\n')
+
+    @patch.object(update_versions, "fetch_latest_version",
+                  return_value=("2.5.2.5491", "2.5.2.5491-ls155"))
+    def test_local_patch_is_not_treated_as_a_downgrade(self, _mock_fetch):
+        """Otherwise every daily run goes red until upstream happens to release."""
+        self.assertEqual(update_versions.main(), 0)
+        self.assertIn('version: "2.5.2.5491.1"', self.config_yaml.read_text())
+
+    @patch.object(update_versions, "fetch_latest_version",
+                  return_value=("2.6.0.5500", "2.6.0.5500-ls160"))
+    def test_real_upstream_release_resets_the_patch(self, _mock_fetch):
+        self.assertEqual(update_versions.main(), 0)
+        self.assertIn('version: "2.6.0.5500"', self.config_yaml.read_text())
 
 
 class TestMainRefusesDowngrade(MainTestCase):
