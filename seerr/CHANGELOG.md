@@ -1,13 +1,13 @@
 # Changelog
 
-## 3.3.0.2
+## 3.3.0.3
 
-- Fix the whole UI being dead under HA Ingress (Plex login, language picker,
-  every control). Seerr answers with `X-Accel-Buffering: no`, which turns
-  nginx's proxy buffering off; `sub_filter` then truncated the login page
-  mid-response, so `__NEXT_DATA__` ended mid-string, `JSON.parse` threw and
-  Next.js never hydrated. nginx now ignores that header and buffers enough
-  for the ~51 kB page. Direct port access was never affected.
+- Revert the 3.3.0.2 buffering change. It was based on a bad measurement:
+  the page looked truncated only because the tool used to inspect it caps
+  responses at 50 kB. The real page is 298 kB, its `__NEXT_DATA__` parses
+  fine and does carry `plexClientIdentifier`. Forcing `proxy_buffering on`
+  and ignoring `X-Accel-Buffering` fixed nothing and risked breaking Seerr's
+  streamed responses.
 
 ## 3.3.0
 
