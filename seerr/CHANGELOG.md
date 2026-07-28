@@ -1,10 +1,10 @@
 # Changelog
 
-## 3.3.0.6
+## 3.3.0.7
 
-- Experiment: all injected runtime patches (fetch / XHR / script.src /
-  crypto polyfill) disabled, diagnostics kept, to test whether the shim is
-  what prevents React from hydrating under ingress. Temporary.
+- Runtime patches restored (the isolation build proved them innocent).
+  Diagnostics now also capture console.error / console.warn, which is where
+  React reports hydration failures. Temporary.
 
 ## 3.3.0.5
 
