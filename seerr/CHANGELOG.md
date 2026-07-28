@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.0.8
+
+- Better probes: detect a React 18 root properly (the previous check looked for
+  React 17's `_reactRootContainer` and always reported 0), and report whether
+  the Turbopack chunk registry and Next.js client global exist. Temporary.
+
 ## 3.3.0.7
 
 - Runtime patches restored (the isolation build proved them innocent).
