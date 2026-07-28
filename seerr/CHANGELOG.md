@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.0.10
+
+- Remove all temporary diagnostics; nginx config is back to its pre-investigation
+  state. The ingress UI remains non-interactive — root cause understood but not
+  fixable from the add-on side, see below. Direct port access is unaffected.
+
 ## 3.3.0.9
 
 - Fix 3.3.0.8 failing to start: a `$` inside a comment in the injected script
