@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.4.0
+
+- Bumped upstream `seerr-team/seerr` to `v3.4.0` (auto-update).
+
 ## 3.3.0.11
 
 - Disable HA Ingress. Seerr's Next.js client bundle has its basePath baked in
