@@ -64,7 +64,7 @@ jobs:
           CALLED_ADDONS: ${{ inputs.addons }}
         run: |
           set -euo pipefail
-          ADDONS='["sonarr","radarr","lidarr","bazarr","seerr","prowlarr","qbittorrent","sabnzbd","tautulli","appflowy"]'
+          ADDONS='["sonarr","radarr","lidarr","bazarr","seerr","prowlarr","appflowy"]'
 
           # Called by the auto-update workflow with an explicit add-on list.
           if [[ -n "${CALLED_ADDONS:-}" && "$CALLED_ADDONS" != "[]" ]]; then

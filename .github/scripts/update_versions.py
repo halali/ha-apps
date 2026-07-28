@@ -46,8 +46,7 @@ def get_with_retry(
     return resp
 
 ROOT = Path(__file__).resolve().parents[2]
-LSIO_ADDONS = ["sonarr", "radarr", "lidarr", "bazarr", "prowlarr",
-               "qbittorrent", "sabnzbd", "tautulli"]
+LSIO_ADDONS = ["sonarr", "radarr", "lidarr", "bazarr", "prowlarr"]
 GITHUB_ADDONS = {
     "seerr": "seerr-team/seerr",
 }
