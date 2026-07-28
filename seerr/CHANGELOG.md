@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.3.0.5
+
+- Diagnostics now report through `document.title` instead of network pings,
+  which the browser tooling drops on navigation. Still temporary.
+
 ## 3.3.0.4
 
 - Temporary diagnostic build. Adds click / window.open / error tracing to the
