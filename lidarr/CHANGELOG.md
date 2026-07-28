@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0.4875.3
+
+- Fix the initialize.json rewrite actually matching: *arr pretty-prints that
+  response, so the real bytes are `"urlBase": ""` with a space after the
+  colon and the previous compact-form filter never fired.
+
 ## 3.1.0.4875.2
 
 - Fix HA Ingress blank page, part two: the entry bundle overwrites
