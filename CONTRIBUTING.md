@@ -67,7 +67,16 @@ python .github/scripts/check_images.py
 ```
 
 Never bump a version in `config.yaml` without letting the Builder workflow
-publish the matching image.
+publish the matching image — and never let it stand still or go backwards when
+the image contents change. `check_version_bump.py` enforces that in CI:
+
+```sh
+python .github/scripts/check_version_bump.py HEAD~1
+```
+
+A version that stays the same republishes an existing tag with different
+contents; one that goes backwards leaves the fix unreachable. Both are green
+builds that ship nothing.
 
 ### Build Locally
 

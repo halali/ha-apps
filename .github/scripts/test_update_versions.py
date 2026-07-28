@@ -12,22 +12,55 @@ assert SPEC and SPEC.loader
 SPEC.loader.exec_module(update_versions)
 
 
+def _token_response():
+    return Mock(status_code=200, json=Mock(return_value={"token": "t"}))
+
+
 class TestGhcrTagExists(TestCase):
+    """ghcr.io needs a bearer token even for public images, and a manifest
+    request whose Accept header omits the index media types answers 404 for an
+    image that exists. Both bit this repo: the check always came back False, so
+    Seerr silently never updated."""
+
     @patch.object(update_versions.requests, "get")
     def test_returns_true_when_manifest_exists(self, mock_get):
-        mock_get.return_value = Mock(status_code=200)
+        mock_get.side_effect = [_token_response(), Mock(status_code=200)]
         self.assertTrue(update_versions.ghcr_tag_exists("seerr-team/seerr", "v3.3.0"))
 
     @patch.object(update_versions.requests, "get")
     def test_returns_false_when_manifest_missing(self, mock_get):
-        mock_get.return_value = Mock(status_code=404)
+        mock_get.side_effect = [_token_response(), Mock(status_code=404)]
         self.assertFalse(update_versions.ghcr_tag_exists("seerr-team/seerr", "v3.3.0"))
+
+    @patch.object(update_versions.requests, "get")
+    def test_sends_the_bearer_token(self, mock_get):
+        mock_get.side_effect = [_token_response(), Mock(status_code=200)]
+        update_versions.ghcr_tag_exists("seerr-team/seerr", "v3.3.0")
+        headers = mock_get.call_args_list[1].kwargs["headers"]
+        self.assertEqual(headers.get("Authorization"), "Bearer t")
+
+    @patch.object(update_versions.requests, "get")
+    def test_accepts_index_manifests_too(self, mock_get):
+        """Without the index media types ghcr.io 404s an image that is there."""
+        mock_get.side_effect = [_token_response(), Mock(status_code=200)]
+        update_versions.ghcr_tag_exists("seerr-team/seerr", "v3.3.0")
+        accept = mock_get.call_args_list[1].kwargs["headers"]["Accept"]
+        self.assertIn("index.v1+json", accept)
+        self.assertIn("manifest.v1+json", accept)
 
     @patch.object(update_versions.time, "sleep")
     @patch.object(update_versions.requests, "get")
     def test_retries_transient_errors(self, mock_get, _mock_sleep):
-        mock_get.side_effect = [Mock(status_code=500), Mock(status_code=200)]
+        mock_get.side_effect = [
+            _token_response(), Mock(status_code=500),
+            _token_response(), Mock(status_code=200),
+        ]
         self.assertTrue(update_versions.ghcr_tag_exists("seerr-team/seerr", "v3.3.0"))
+
+    @patch.object(update_versions.requests, "get")
+    def test_returns_false_when_the_token_cannot_be_obtained(self, mock_get):
+        mock_get.side_effect = [Mock(status_code=500, json=Mock(return_value={}))]
+        self.assertFalse(update_versions.ghcr_tag_exists("seerr-team/seerr", "v3.3.0"))
 
 
 # Tags that a single nightly/develop build cycle publishes.  None of these are

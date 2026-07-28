@@ -240,12 +240,47 @@ def fetch_latest_github_release(repo: str) -> Optional[str]:
         return None
 
 
+GHCR_TOKEN_URL = "https://ghcr.io/token?scope=repository:{repo}:pull&service=ghcr.io"
+# ghcr.io answers 404 for an image that exists when the Accept header does not
+# name the media type it actually stored, so list all four.
+GHCR_ACCEPT = ",".join([
+    "application/vnd.oci.image.index.v1+json",
+    "application/vnd.oci.image.manifest.v1+json",
+    "application/vnd.docker.distribution.manifest.list.v2+json",
+    "application/vnd.docker.distribution.manifest.v2+json",
+])
+
+
+def ghcr_anonymous_token(repo: str) -> Optional[str]:
+    """Fetch the anonymous pull token ghcr.io requires even for public images."""
+    try:
+        resp = requests.get(GHCR_TOKEN_URL.format(repo=repo), timeout=30)
+    except requests.RequestException as exc:
+        print(f"[warn] could not get a ghcr.io token for {repo}: {exc}")
+        return None
+    if resp.status_code != 200:
+        print(f"[warn] ghcr.io token request for {repo} returned HTTP {resp.status_code}")
+        return None
+    return resp.json().get("token") or None
+
+
 def ghcr_tag_exists(image: str, tag: str) -> bool:
-    """Return True only when the GHCR tag is confirmed to exist."""
+    """Return True only when the GHCR tag is confirmed to exist.
+
+    Both halves of this used to be wrong, and the effect was silent: ghcr.io
+    requires a bearer token even anonymously, and it 404s a manifest whose
+    media type is missing from Accept.  The unauthenticated request answered
+    401, fell through to "unexpected status" and returned False every time, so
+    the add-on was reported as "image not available yet" forever and never
+    updated.
+    """
     url = f"https://ghcr.io/v2/{image}/manifests/{tag}"
-    headers = {"Accept": "application/vnd.oci.image.manifest.v1+json"}
 
     for attempt in range(3):
+        token = ghcr_anonymous_token(image)
+        if not token:
+            return False
+        headers = {"Accept": GHCR_ACCEPT, "Authorization": f"Bearer {token}"}
         try:
             resp = requests.get(url, timeout=30, headers=headers)
         except requests.RequestException as exc:
