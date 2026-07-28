@@ -1,6 +1,6 @@
 ---
 name: Seerr
-version: "3.3.0.10"
+version: "3.3.0.11"
 slug: seerr
 description: >-
   Open-source media request and discovery manager for Jellyfin, Plex, and Emby.
@@ -15,12 +15,16 @@ boot: auto
 host_network: false
 hassio_api: true
 hassio_role: default
-ingress: true
-ingress_port: 5055
-ingress_stream: true
-panel_icon: mdi:eye-plus
-panel_title: Seerr
-panel_admin: true
+# Ingress is deliberately OFF. Seerr is a Next.js Pages Router app and its
+# basePath is baked into the client bundle at build time, so serving it under
+# /api/hassio_ingress/<token> — a prefix that is unknown at build time and
+# differs per installation — leaves the client bootstrap unable to reconcile
+# its route. The page renders from SSR HTML but never becomes interactive: no
+# window.next, no React root, no error anywhere. A sidebar entry that looks
+# working and is not is worse than none, so the Web UI button points at the
+# port instead.
+ingress: false
+webui: "http://[HOST]:[PORT:5055]"
 ports:
   "5055/tcp": 5055
 ports_description:

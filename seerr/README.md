@@ -5,7 +5,12 @@ Open-source media request and discovery manager for Plex, Jellyfin, and Emby. Ac
 ## Installation
 
 1. Add the repository `https://github.com/halali/ha-apps` in the HA Add-on Store.
-2. Install **Seerr**, start it and open via the sidebar.
+2. Install **Seerr**, start it and open it with **Open Web UI** (port `5055`).
+
+> This add-on does not use Home Assistant Ingress, so it has no sidebar entry.
+> Seerr's Next.js client bundle has `basePath` baked in at build time and cannot
+> bootstrap under the per-install ingress path — the page would render but stay
+> inert. Port `5055` works normally, Plex login included.
 
 ## Configuration
 

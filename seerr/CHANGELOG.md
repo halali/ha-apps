@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.3.0.11
+
+- Disable HA Ingress. Seerr's Next.js client bundle has its basePath baked in
+  at build time, so it cannot bootstrap under the per-install ingress path:
+  the page rendered but never became interactive, with no error raised. The
+  sidebar entry is gone and the Web UI button now opens `http://<host>:5055`,
+  which has always worked. Plex login works there.
+
 ## 3.3.0.10
 
 - Remove all temporary diagnostics; nginx config is back to its pre-investigation

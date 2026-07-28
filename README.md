@@ -1,6 +1,8 @@
 # Halali — Home Assistant Add-ons
 
-A collection of Home Assistant add-ons for popular *arr applications built on [LinuxServer.io](https://www.linuxserver.io/) images. All add-ons support **Home Assistant Ingress** (sidebar button), an **external port** for direct API access and mobile apps, and **automatic updates** when a new upstream version is released.
+A collection of Home Assistant add-ons for popular *arr applications built on [LinuxServer.io](https://www.linuxserver.io/) images. Most add-ons support **Home Assistant Ingress** (sidebar button); all expose an **external port** for direct API access and mobile apps, and update **automatically** when a new upstream version is released.
+
+> **Seerr is the exception:** it runs without Ingress. Its Next.js client bundle has `basePath` baked in at build time, so it cannot bootstrap under Home Assistant's per-install ingress path — the page renders but never becomes interactive. Open it on port `5055` instead; the add-on's **Open Web UI** button points there.
 
 ## Repository Installation
 
@@ -25,7 +27,7 @@ A collection of Home Assistant add-ons for popular *arr applications built on [L
 
 ## Features
 
-- ✅ **HA Ingress** — open the app directly from the HA sidebar, no separate login
+- ✅ **HA Ingress** — open the app directly from the HA sidebar, no separate login (all except Seerr)
 - ✅ **External port** — direct LAN access for API clients (e.g. Seerr ↔ Sonarr, mobile apps)
 - ✅ **amd64** — built for x86-64 hosts
 - ✅ **Auto-update** — GitHub Actions checks for new upstream versions daily and bumps the add-on automatically
