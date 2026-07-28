@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.3.0.9
+
+- Fix 3.3.0.8 failing to start: a `$` inside a comment in the injected script
+  was parsed by nginx as a variable (`invalid variable name`), so nginx never
+  came up and the add-on served nothing. Also removes a duplicate
+  `sub_filter_types text/html`.
+
 ## 3.3.0.8
 
 - Better probes: detect a React 18 root properly (the previous check looked for
