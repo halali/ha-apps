@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.1.0.4875.4
+
+- Pass the real `Host` through to the app. nginx was sending its own default
+  `$proxy_host` — literally `127.0.0.1:8687` — so every absolute URL the app
+  built for a peer that does not send `X-Forwarded-Host` (Prowlarr's app sync,
+  Bazarr, another *arr) pointed at a port that does not exist in that peer's
+  container. Ingress was never affected, because Supervisor sets
+  `X-Forwarded-Host` on ingress requests and the app prefers it.
+
 ## 3.1.0.4875.3
 
 - Fix the initialize.json rewrite actually matching: *arr pretty-prints that

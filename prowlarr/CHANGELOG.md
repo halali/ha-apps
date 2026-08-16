@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.5.2.5491.4
+
+- Fix Radarr/Sonarr/Lidarr failing to grab any release with
+  `Connection refused (127.0.0.1:9697)`. nginx never set an upstream `Host`
+  header, so Prowlarr saw nginx's default `$proxy_host` — its own internal
+  port — and built the `downloadUrl` of every search result from it. The peer
+  then tried to fetch that URL inside its *own* container, where nothing
+  listens on 9697. Indexer settings were correct all along and search kept
+  working, which made this look like a download-client fault. Ingress was
+  never affected, because Supervisor sets `X-Forwarded-Host`.
+
 ## 2.5.2.5491.3
 
 - Fix the initialize.json rewrite actually matching: *arr pretty-prints that
