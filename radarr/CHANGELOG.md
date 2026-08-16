@@ -1,5 +1,18 @@
 # Changelog
 
+## 6.3.0.10514.5
+
+- Make the `PUID`/`PGID` options actually do something. They were declared in
+  the schema and written to `options.json`, but no script or Dockerfile ever
+  read them, so the container kept the LinuxServer default uid 911 whatever was
+  configured. `/media` is a bind mount of a root-owned CIFS share with
+  `dir_mode 0755`, so that uid could read and traverse it but never write,
+  and every import failed with `Access to the path '...' is denied` even
+  though the source file read fine. The image now defaults `PUID`/`PGID` to 0, and a new
+  `init-ha-puid` oneshot ordered ahead of LinuxServer's `init-adduser` applies
+  whatever the options hold. Both the wiring and the oneshot fall back to that
+  default rather than blocking start-up.
+
 ## 6.3.0.10514.4
 
 - Pass the real `Host` through to the app. nginx was sending its own default

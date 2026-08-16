@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.5.2.5491.5
+
+- Make the `PUID`/`PGID` options actually do something. They were declared in
+  the schema and written to `options.json`, but no script or Dockerfile ever
+  read them, so the container kept the LinuxServer default uid 911 whatever was
+  configured. The image now defaults `PUID`/`PGID` to 0, and a new
+  `init-ha-puid` oneshot ordered ahead of LinuxServer's `init-adduser` applies
+  whatever the options hold. Both the wiring and the oneshot fall back to that
+  default rather than blocking start-up.
+
 ## 2.5.2.5491.4
 
 - Fix Radarr/Sonarr/Lidarr failing to grab any release with

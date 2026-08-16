@@ -15,7 +15,7 @@ PGID: 0
 TZ: Europe/Bratislava
 ```
 
-- **PUID / PGID** — user ID Bazarr runs as. Set to `1000` if you need write access to `/media`.
+- **PUID / PGID** — user and group ID Bazarr runs as. Leave at `0` (root) unless you know better: Home Assistant mounts `/media` from a CIFS share owned by root with `dir_mode 0755`, so any other uid can read it but not write to it. Lower it only when `/media` is local storage the target uid can write.
 - **TZ** — timezone for scheduling.
 
 > Bazarr does not enforce a separate login by default — Home Assistant authenticates the Ingress session, so no `reset_auth` option is exposed.

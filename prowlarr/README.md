@@ -16,7 +16,7 @@ TZ: Europe/Bratislava
 reset_auth: false
 ```
 
-- **PUID / PGID** — user ID Prowlarr runs as.
+- **PUID / PGID** — user and group ID Prowlarr runs as. Leave at `0` (root); the option is applied at start-up.
 - **TZ** — timezone for scheduling.
 - **reset_auth** — if `true`, disables authentication on startup.
 

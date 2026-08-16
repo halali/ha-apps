@@ -21,7 +21,7 @@ TZ: Europe/Bratislava
 reset_auth: false
 ```
 
-- **PUID / PGID** — user ID Sonarr runs as. Set to `1000` if you need write access to `/media`.
+- **PUID / PGID** — user and group ID Sonarr runs as. Leave at `0` (root) unless you know better: Home Assistant mounts `/media` from a CIFS share owned by root with `dir_mode 0755`, so any other uid can read it but not write to it. Lower it only when `/media` is local storage the target uid can write.
 - **TZ** — timezone for scheduling.
 - **reset_auth** — if `true`, disables authentication on startup (useful when using Ingress only and want to avoid double login).
 
