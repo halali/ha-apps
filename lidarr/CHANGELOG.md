@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.1.0.4875.6
+
+- Fix every poster and fanart being a grey placeholder over Ingress. The UI
+  uses the image URL exactly as the API hands it over -- `MovieImage.tsx`
+  reads `image?.url ?? image?.remoteUrl` and only swaps the size suffix, it
+  never prepends `urlBase`. *arr bakes its own `UrlBase` into that URL
+  server-side, and this add-on keeps `UrlBase` empty so direct port access
+  stays clean for Bazarr and Seerr, so the browser got `/MediaCover/...`,
+  resolved it against the Home Assistant origin and 404ed. nginx now
+  prefixes those paths in the API responses; on direct port access the
+  ingress path is empty and the rewrite is a no-op.
+
+- Actually apply the `PUID`/`PGID` options. The previous release added an s6
+  oneshot for this, which could never have worked: `S6_KEEP_ENV=1` makes
+  s6's `with-contenv` skip its envdir and pass the inherited process
+  environment straight through, so nothing started under s6 can change what
+  `init-adduser` reads. The options are now read by an entrypoint wrapper
+  that runs before `/init`. The image still defaults both to 0.
+
 ## 3.1.0.4875.5
 
 - Make the `PUID`/`PGID` options actually do something. They were declared in

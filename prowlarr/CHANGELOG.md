@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.5.2.5491.6
+
+- Actually apply the `PUID`/`PGID` options. The previous release added an s6
+  oneshot for this, which could never have worked: `S6_KEEP_ENV=1` makes
+  s6's `with-contenv` skip its envdir and pass the inherited process
+  environment straight through, so nothing started under s6 can change what
+  `init-adduser` reads. The options are now read by an entrypoint wrapper
+  that runs before `/init`. The image still defaults both to 0.
+
 ## 2.5.2.5491.5
 
 - Make the `PUID`/`PGID` options actually do something. They were declared in
