@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.1
+
+- Bumped LinuxServer.io `bazarr` to `1.6.1` (auto-update).
+
 ## 1.6.0.3
 
 - Actually apply the `PUID`/`PGID` options. The previous release added an s6

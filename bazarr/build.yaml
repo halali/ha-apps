@@ -1,9 +1,9 @@
 ---
 build_from:
-  amd64: lscr.io/linuxserver/bazarr:1.6.0
-  aarch64: lscr.io/linuxserver/bazarr:1.6.0
-  armv7: lscr.io/linuxserver/bazarr:1.6.0
-  armhf: lscr.io/linuxserver/bazarr:1.6.0
+  amd64: lscr.io/linuxserver/bazarr:1.6.1
+  aarch64: lscr.io/linuxserver/bazarr:1.6.1
+  armv7: lscr.io/linuxserver/bazarr:1.6.1
+  armhf: lscr.io/linuxserver/bazarr:1.6.1
 labels:
   org.opencontainers.image.title: "Bazarr"
   org.opencontainers.image.description: "Bazarr add-on for Home Assistant"
