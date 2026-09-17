@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.20.3014
+
+- Bumped LinuxServer.io `sonarr` to `4.0.20.3014` (auto-update).
+
 ## 4.0.19.2979.6
 
 - Fix every poster and fanart being a grey placeholder over Ingress. The UI

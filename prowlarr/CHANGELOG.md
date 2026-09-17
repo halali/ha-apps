@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.6.5.5623
+
+- Bumped LinuxServer.io `prowlarr` to `2.6.5.5623` (auto-update).
+
 ## 2.5.2.5491.6
 
 - Actually apply the `PUID`/`PGID` options. The previous release added an s6

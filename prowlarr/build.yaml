@@ -1,6 +1,6 @@
 ---
 build_from:
-  amd64: lscr.io/linuxserver/prowlarr:2.5.2.5491-ls155
+  amd64: lscr.io/linuxserver/prowlarr:2.6.5.5623-ls161
 labels:
   org.opencontainers.image.title: "Prowlarr"
   org.opencontainers.image.description: "Prowlarr add-on for Home Assistant"

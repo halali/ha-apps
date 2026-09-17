@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.4.4.10685
+
+- Bumped LinuxServer.io `radarr` to `6.4.4.10685` (auto-update).
+
 ## 6.3.0.10514.6
 
 - Fix every poster and fanart being a grey placeholder over Ingress. The UI
