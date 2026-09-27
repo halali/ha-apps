@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.2
+
+- Bumped LinuxServer.io `bazarr` to `1.6.2` (auto-update).
+
 ## 1.6.1
 
 - Bumped LinuxServer.io `bazarr` to `1.6.1` (auto-update).
