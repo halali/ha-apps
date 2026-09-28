@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.5.0
+
+- Bumped upstream `seerr-team/seerr` to `v3.5.0` (auto-update).
+
 ## 3.4.1
 
 - Bumped upstream `seerr-team/seerr` to `v3.4.1` (auto-update).
