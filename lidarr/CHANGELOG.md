@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.6.5079
+
+- Bumped LinuxServer.io `lidarr` to `3.1.6.5079` (auto-update).
+
 ## 3.1.0.4875.6
 
 - Fix every poster and fanart being a grey placeholder over Ingress. The UI
