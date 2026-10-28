@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.7.0.5723
+
+- Bumped LinuxServer.io `prowlarr` to `2.7.0.5723` (auto-update).
+
 ## 2.6.5.5623
 
 - Bumped LinuxServer.io `prowlarr` to `2.6.5.5623` (auto-update).
