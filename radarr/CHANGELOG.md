@@ -1,5 +1,21 @@
 # Changelog
 
+## 6.4.4.10685.1
+
+- Fix a blank Ingress panel whenever Radarr asks for a login. ASP.NET Core's
+  cookie authentication builds its login redirect with `BuildRedirectUri`,
+  which absolutises the target against `Request.Scheme` and `Request.Host` --
+  and the `Host` this add-on forwards upstream is Home Assistant's own
+  external hostname, because Supervisor copies the browser's `Host` header
+  straight through to the add-on. nginx's `proxy_redirect` matches a
+  `Location` prefix literally, so the root-relative rule could never fire on
+  `http://<ha-host>/login?returnUrl=%2F`: the browser was sent out of the
+  Ingress path to Home Assistant's own `/login`, which does not exist.
+  `/initialize.json` was redirected the same way, so the React shell never
+  bootstrapped and the panel came up blank rather than showing a login form.
+  nginx now rewrites redirects that point back at this add-on too, while a
+  `Location` naming any other host still passes through untouched.
+
 ## 6.4.4.10685
 
 - Bumped LinuxServer.io `radarr` to `6.4.4.10685` (auto-update).
