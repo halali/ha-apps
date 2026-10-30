@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.0.20.3014.2
+
+- Tell Sonarr the protocol the browser actually used. nginx was setting
+  `X-Forwarded-Proto` to `$scheme` -- the scheme of Home Assistant's own hop
+  to nginx, which is plain `http` -- and that overwrote the `https` Home
+  Assistant had already put in the header. Sonarr therefore built every
+  absolute URL it hands out on the wrong protocol: redirects, SignalR
+  negotiation and API self-links alike. The forwarded value is now used when
+  the request came through Ingress, where Supervisor is the one who set it.
+  On direct port access the connection scheme still wins, so a value invented
+  by a client on the LAN is ignored exactly as it was before.
+
 ## 4.0.20.3014.1
 
 - Fix a blank Ingress panel whenever Sonarr asks for a login. ASP.NET Core's
