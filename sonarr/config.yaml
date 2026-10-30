@@ -1,6 +1,6 @@
 ---
 name: Sonarr
-version: "4.0.20.3014.1"
+version: "4.0.20.3014.2"
 slug: sonarr
 description: Smart PVR for newsgroup and bittorrent users — TV series.
 url: https://github.com/halali/ha-apps/tree/main/sonarr
